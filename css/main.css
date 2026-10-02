@@ -441,12 +441,14 @@ body.menu-open { overflow: hidden; }
 }
 .hero__poster img { width: 100%; height: 100%; object-fit: contain; }
 /* Bis der 3D-Ring übernimmt: Standbild schwebt sanft */
-.hero__poster img { animation: ring-float 5s ease-in-out infinite; transform-origin: 50% 55%; }
-@keyframes ring-float { 0%, 100% { transform: translateY(0) rotate(-1.5deg); } 50% { transform: translateY(-10px) rotate(1.5deg); } }
-.hero__canvas { opacity: 0; transition: opacity 1.4s var(--ease); pointer-events: auto; touch-action: pan-y; }
+/* Schweben liegt auf der ganzen Bühne → läuft beim Wechsel Standbild → 3D nahtlos weiter */
+.hero__stage { animation: ring-float 6s ease-in-out infinite; }
+@keyframes ring-float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-12px); } }
+/* 3D blendet ÜBER dem identischen Standbild ein; das Standbild verschwindet erst danach (kein Helligkeitsloch) */
+.hero__canvas { z-index: 1; opacity: 0; transition: opacity .9s var(--ease); pointer-events: auto; touch-action: pan-y; }
 .hero__canvas.is-ready { opacity: 1; }
-.hero__poster { transition: opacity 1.4s var(--ease); }
-.hero__canvas.is-ready + .hero__poster, .hero__stage.is-live .hero__poster { opacity: 0; }
+.hero__poster { z-index: 0; }
+.hero__canvas.is-ready + .hero__poster, .hero__stage.is-live .hero__poster { opacity: 0; transition: opacity 0s 1s; }
 .hero__content { position: relative; z-index: 2; display: grid; gap: clamp(20px, 3vh, 32px); }
 .hero__title { max-width: 11ch; }
 .hero__title .w { display: inline-block; }
@@ -772,16 +774,13 @@ body.menu-open { overflow: hidden; }
 .page-hero h1 { max-width: 16ch; }
 .page-hero .lead { margin-top: 4px; }
 .page-hero__ring img { width: 100%; }
-.page-hero__canvas { aspect-ratio: 1; height: auto; transition: opacity 1.4s var(--ease); }
+.page-hero__canvas { z-index: 1; aspect-ratio: 1; height: auto; transition: opacity .9s var(--ease); }
 .page-hero__canvas:not(.is-ready) { opacity: 0 !important; }
-picture.page-hero__ring { transition: opacity 1.4s var(--ease); }
-.page-hero__canvas.is-ready + picture.page-hero__ring { opacity: 0; }
+.page-hero__canvas.is-ready + picture.page-hero__ring { opacity: 0; transition: opacity 0s 1s; }
 .page-hero__ring { position: absolute; right: -8vw; top: 50%; width: min(52vw, 560px); transform: translateY(-50%); opacity: .5; pointer-events: none; }
 @media (min-width: 900px) {
-  .page-hero__ring { right: max(-6vw, calc((100vw - 1320px) / 2 - 120px)); }
+  .page-hero__ring { right: max(-6vw, calc((100vw - 1320px) / 2 - 120px)); opacity: .75; }
   .page-hero__ring--bright { opacity: .95; }
-  .page-hero__canvas { opacity: .75; }
-  .page-hero__canvas.page-hero__ring--bright { opacity: 1; }
 }
 @media (max-width: 899px) { .page-hero__ring { right: -30vw; top: 22%; width: 80vw; opacity: .22; } }
 .content-grid { display: grid; gap: clamp(40px, 5vw, 96px); }

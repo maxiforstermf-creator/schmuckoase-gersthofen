@@ -254,7 +254,9 @@ async function build(canvas, opts) {
   const baseAngle = opts.angle ?? 0;
   const autoSpin = page ? 0.08 : 0.32;     // Grunddrehung pro Sekunde
   const spinPerPx = page ? 0.0075 : 0.0045; // zusätzliche Drehung je gescrolltem Pixel
-  let scrollCur = scrollY;
+  let scrollCur = 0;      // startet bei 0 und gleitet zur aktuellen Position → kein Sprung beim Übergang
+  let spin = 0;           // Grunddrehung läuft weich an
+  const uT0 = page ? 5.1 : 2.4; // gleicher Funkel-Zustand wie im Standbild
 
   /* Nur rendern, wenn sichtbar und Tab aktiv */
   let visible = true, running = false, last = performance.now(), t = 0;
@@ -265,10 +267,12 @@ async function build(canvas, opts) {
     cur.y += (target.y - cur.y) * 0.05;
     scrollCur += (scrollY - scrollCur) * 0.085;
     const sp = Math.min(scrollCur / innerHeight, 1.5); // Scroll-Fortschritt in Bildschirmhöhen
-    turntable.rotation.y = baseAngle + t * autoSpin + cur.y + scrollCur * spinPerPx;
+    const k = Math.min(t / 1.6, 1);
+    spin += dt * autoSpin * k * k * (3 - 2 * k);
+    turntable.rotation.y = baseAngle + spin + cur.y + scrollCur * spinPerPx;
     turntable.rotation.x = cur.x + sp * (page ? 0.35 : 0.28);
     tilt.rotation.z = 0.32 + Math.sin(t * 0.4) * 0.05 - sp * 0.18;
-    gMat.uniforms.uTime.value = t * 2.2;
+    gMat.uniforms.uTime.value = uT0 + t * 2.2;
     renderer.render(scene, camera);
     requestAnimationFrame(loop);
   };
