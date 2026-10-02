@@ -128,20 +128,34 @@
 </header>
 <div class="mobile-menu" id="mobile-menu" aria-label="Menü">
   <nav aria-label="Mobile Navigation">
-    <ul>
-      <li><a class="mm-main" href="/">Start</a></li>
-      <li><a class="mm-main" href="/goldankauf-gersthofen/">Ankauf</a>
-        <div class="mm-sub"><a href="/goldankauf-gersthofen/">Goldankauf &amp; Goldrechner</a><a href="/zahngold-ankauf-gersthofen/">Zahngold</a><a href="/silberankauf-gersthofen/">Silber</a></div></li>
-      <li><a class="mm-main" href="/schmuckreparatur-gersthofen/">Service</a>
-        <div class="mm-sub"><a href="/uhrenbatterie-wechseln-gersthofen/">Uhrenbatterie</a><a href="/schmuckreparatur-gersthofen/">Reparatur &amp; Gravur</a><a href="/ohrloch-stechen-gersthofen/" aria-current="page">Ohrloch stechen</a></div></li>
-      <li><a class="mm-main" href="/trauringe-gersthofen/">Schmuck &amp; Trauringe</a></li>
+    <ul class="mm-list">
+      <li class="mm-group">
+        <button class="mm-main mm-toggle" type="button" aria-expanded="false" aria-controls="mm-ankauf">Ankauf<span class="mm-chev" aria-hidden="true"></span></button>
+        <div class="mm-sub" id="mm-ankauf"><ul>
+          <li><a href="/goldankauf-gersthofen/">Goldankauf<small>mit Goldrechner</small></a></li>
+          <li><a href="/zahngold-ankauf-gersthofen/">Zahngold</a></li>
+          <li><a href="/silberankauf-gersthofen/">Silber</a></li>
+        </ul></div>
+      </li>
+      <li class="mm-group">
+        <button class="mm-main mm-toggle" type="button" aria-expanded="false" aria-controls="mm-service">Service<span class="mm-chev" aria-hidden="true"></span></button>
+        <div class="mm-sub" id="mm-service"><ul>
+          <li><a href="/uhrenbatterie-wechseln-gersthofen/">Uhrenbatterie</a></li>
+          <li><a href="/schmuckreparatur-gersthofen/">Reparatur &amp; Gravur</a></li>
+          <li><a href="/ohrloch-stechen-gersthofen/" aria-current="page">Ohrloch stechen</a></li>
+        </ul></div>
+      </li>
+      <li><a class="mm-main" href="/trauringe-gersthofen/">Schmuck</a></li>
       <li><a class="mm-main" href="/eroeffnung/">Eröffnung</a></li>
       <li><a class="mm-main" href="/kontakt/">Kontakt</a></li>
     </ul>
   </nav>
   <div class="mobile-menu__foot">
-    <a class="btn btn--solid" href="tel:+49821497901"><svg aria-hidden="true"><use href="/assets/icons.svg#i-phone"/></svg>0821 497901</a>
-    <span>City Center Gersthofen</span>
+    <div class="mm-actions">
+      <a class="btn btn--solid" href="tel:+49821497901"><svg aria-hidden="true"><use href="/assets/icons.svg#i-phone"/></svg>Anrufen</a>
+      <a class="btn" href="/kontakt/#whatsapp" data-wa="Hallo SchmuckOase, ich habe eine Frage:"><svg aria-hidden="true"><use href="/assets/icons.svg#i-whatsapp"/></svg>WhatsApp</a>
+    </div>
+    <span class="badge" data-open-badge><span class="badge__dot"></span><span data-open-text>Öffnungszeiten</span></span>
   </div>
 </div>
 <!-- @/partial -->

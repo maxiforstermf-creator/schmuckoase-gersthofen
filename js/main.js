@@ -41,13 +41,24 @@ function initHeader() {
     document.body.classList.toggle('menu-open', open);
     header.classList.toggle('is-scrolled', open || scrollY > 24);
     menu.inert = !open;
-    if (open) $('a', menu)?.focus({ preventScroll: true });
+    if (open) $('.mm-main', menu)?.focus({ preventScroll: true });
   };
   if (burger && menu) {
     menu.inert = true;
     burger.addEventListener('click', () => setMenu(burger.getAttribute('aria-expanded') !== 'true'));
     menu.addEventListener('click', (e) => { if (e.target.closest('a')) setMenu(false); });
     addEventListener('keydown', (e) => { if (e.key === 'Escape' && menu.classList.contains('is-open')) { setMenu(false); burger.focus(); } });
+  }
+
+  // Mobile-Menü: Akkordeon, immer nur eine Gruppe offen; aktuelle Gruppe startet geöffnet
+  const toggles = $$('.mm-toggle', menu || document);
+  const setGroup = (btn, open) => btn.setAttribute('aria-expanded', open);
+  for (const btn of toggles) {
+    if (btn.parentElement.querySelector('[aria-current="page"]')) setGroup(btn, true);
+    btn.addEventListener('click', () => {
+      const open = btn.getAttribute('aria-expanded') !== 'true';
+      toggles.forEach((b) => setGroup(b, b === btn && open));
+    });
   }
 
   for (const li of $$('.has-sub', header)) {

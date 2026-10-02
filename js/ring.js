@@ -8,6 +8,9 @@
 const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const coarse = matchMedia('(pointer: coarse)').matches;
 
+// Arbeit in kleine Häppchen teilen, damit der Hauptthread zwischendurch frei ist (kein Ruckeln/TBT)
+const pause = () => (globalThis.scheduler?.yield ? scheduler.yield() : new Promise((r) => setTimeout(r, 0)));
+
 function webglOK() {
   try {
     const c = document.createElement('canvas');
@@ -23,7 +26,7 @@ function deviceOK() {
   return webglOK();
 }
 
-/** Startet erst bei der ersten Interaktion (Mobile) bzw. kurz nach dem Laden (Desktop). */
+/** Startet bei der ersten Interaktion, spätestens kurz nach dem Laden. */
 function whenEngaged(cb) {
   const events = ['pointerdown', 'pointermove', 'touchstart', 'scroll', 'keydown', 'wheel'];
   let done = false;
@@ -34,18 +37,18 @@ function whenEngaged(cb) {
     cb();
   };
   events.forEach((e) => addEventListener(e, go, { passive: true, once: true }));
-  const timer = coarse ? 0 : setTimeout(go, 2500);
+  const timer = setTimeout(go, coarse ? 3500 : 2500); // Handy: automatisch starten, sobald die Seite sicher fertig ist
 }
 
 /* Gravur „SchmuckOase“ außen umlaufend: Canvas-Texturen für Farbe/Relief und Rauheit.
    UV der Lathe-Geometrie: u = Umfang, v = Profil (Außenmitte bei v = 0.5). */
 const FLIP_X = 1, FLIP_Y = 1; // Leserichtung der Gravur auf der Außenseite
-async function gravur(T, renderer, { umfang, perimeter }) {
+async function gravur(T, renderer, { umfang, perimeter, lite }) {
   try {
     const face = new FontFace('Cormorant Garamond Gravur', 'url(/assets/fonts/cormorant-garamond-latin-500-italic.woff2)', { style: 'italic', weight: '500' });
     document.fonts.add(await face.load());
   } catch {}
-  const W = 4096, H = 1024;
+  const W = lite ? 2048 : 4096, H = lite ? 512 : 1024; // Handy: kleinere Textur
   const pxU = W / umfang, pxV = H / perimeter;   // Pixel je Szenen-Einheit entlang Umfang bzw. Profil
   const sx = pxU / pxV;                          // Verzerrung u/v ausgleichen
   const fontPx = Math.round(0.21 * pxV);         // Schrifthöhe ≈ 0,21 Einheiten (Ringbreite 0,52)
@@ -61,12 +64,14 @@ async function gravur(T, renderer, { umfang, perimeter }) {
       g.restore();
     }
     const t = new T.CanvasTexture(c);
-    t.anisotropy = renderer.capabilities.getMaxAnisotropy();
+    t.anisotropy = Math.min(renderer.capabilities.getMaxAnisotropy(), lite ? 4 : 16);
     return t;
   };
   const color = make('#ffffff', '#6f5326');       // Buchstaben dunkler + tiefer (Bump)
   color.colorSpace = T.SRGBColorSpace;
+  renderer.initTexture(color); await pause();     // Upload zur GPU als eigener Schritt
   const rough = make('#262626', '#8c8c8c');       // poliert 0.15 · Gravur matt ≈ 0.55
+  renderer.initTexture(rough); await pause();
   return { color, rough };
 }
 
@@ -79,6 +84,8 @@ export function init(canvas, opts = {}) {
 async function build(canvas, opts) {
   const T = await import('./vendor/three.module.min.js');
   const still = !!opts.still;
+  const lite = coarse && !still; // Handy: leichtere Variante (optisch kaum Unterschied)
+  await pause();
 
   const renderer = new T.WebGLRenderer({ canvas, antialias: true, alpha: true, preserveDrawingBuffer: still, powerPreference: 'high-performance' });
   renderer.setPixelRatio(still ? (opts.pixelRatio || 2) : Math.min(devicePixelRatio, 2));
@@ -86,6 +93,7 @@ async function build(canvas, opts) {
   renderer.toneMapping = T.ACESFilmicToneMapping;
   renderer.toneMappingExposure = 1.05;
   renderer.outputColorSpace = T.SRGBColorSpace;
+  await pause();
 
   const scene = new T.Scene();
   const camera = new T.PerspectiveCamera(28, 1, 0.1, 50);
@@ -109,6 +117,7 @@ async function build(canvas, opts) {
   const envMap = pmrem.fromScene(studio, 0.035).texture;
   scene.environment = envMap;
   pmrem.dispose();
+  await pause();
 
   /* Ringschiene: Querschnitt als Superellipse („Komfortprofil“), per Lathe gedreht */
   const R = 1.0, halfW = 0.09, halfH = 0.26, n = 3.2, steps = 120;
@@ -131,12 +140,13 @@ async function build(canvas, opts) {
     const f = (target - cum[j]) / (cum[j + 1] - cum[j] || 1);
     profile.push(new T.Vector2(dense[j][0] + (dense[j + 1][0] - dense[j][0]) * f, dense[j][1] + (dense[j + 1][1] - dense[j][1]) * f));
   }
-  const geo = new T.LatheGeometry(profile, 240);
-  const engr = await gravur(T, renderer, { umfang: 2 * Math.PI * (R + 2 * halfW), perimeter });
+  const geo = new T.LatheGeometry(profile, lite ? 160 : 240);
+  await pause();
+  const engr = await gravur(T, renderer, { umfang: 2 * Math.PI * (R + 2 * halfW), perimeter, lite });
   const mat = new T.MeshPhysicalMaterial({
     color: 0xe6c17a, metalness: 1, roughness: 1, roughnessMap: engr.rough,
-    map: engr.color, bumpMap: engr.color, bumpScale: 3.5,
-    clearcoat: 0.25, clearcoatRoughness: 0.08, envMapIntensity: 1.15,
+    map: engr.color, bumpMap: engr.color, bumpScale: lite ? 2.5 : 3.5,
+    clearcoat: lite ? 0 : 0.25, clearcoatRoughness: 0.08, envMapIntensity: 1.15,
   });
   const ring = new T.Mesh(geo, mat);
 
@@ -207,7 +217,9 @@ async function build(canvas, opts) {
     return;
   }
 
+  await pause();
   if (renderer.compileAsync) await renderer.compileAsync(scene, camera);
+  await pause();
   new ResizeObserver(resize).observe(canvas);
 
   /* Maus (Desktop) / Neigung (Mobile, erst nach Tap) */

@@ -8,6 +8,7 @@ import { fileURLToPath } from 'node:url';
 
 const ROOT = fileURLToPath(new URL('..', import.meta.url));
 const PORT = Number(process.argv[2] || 8138);
+const HOST = process.argv[3] || '127.0.0.1'; // '0.0.0.0' = im WLAN erreichbar (z. B. fürs Handy)
 const TYPES = {
   '.html': 'text/html; charset=utf-8', '.css': 'text/css; charset=utf-8', '.js': 'text/javascript; charset=utf-8',
   '.json': 'application/json; charset=utf-8', '.svg': 'image/svg+xml', '.png': 'image/png', '.jpg': 'image/jpeg',
@@ -34,4 +35,4 @@ createServer(async (req, res) => {
   if (COMPRESS.has(ext) && /gzip/.test(req.headers['accept-encoding'] || '')) { body = gzipSync(body, { level: 9 }); headers['Content-Encoding'] = 'gzip'; }
   res.writeHead(status, headers);
   res.end(body);
-}).listen(PORT, '127.0.0.1', () => console.log(`http://127.0.0.1:${PORT}`));
+}).listen(PORT, HOST, () => console.log(`http://${HOST}:${PORT}`));
