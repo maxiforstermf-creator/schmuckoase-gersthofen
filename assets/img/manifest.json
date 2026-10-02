@@ -31,6 +31,40 @@
   "w": 2000,
   "h": 1333
  },
+ "kachel-barren": {
+  "widths": [
+   800,
+   1400,
+   1920
+  ],
+  "w": 1920,
+  "h": 1440
+ },
+ "kachel-muenzen": {
+  "widths": [
+   800,
+   1210
+  ],
+  "w": 1210,
+  "h": 1317
+ },
+ "kachel-silber": {
+  "widths": [
+   800,
+   1400,
+   1740
+  ],
+  "w": 1740,
+  "h": 1236
+ },
+ "kachel-zahngold": {
+  "widths": [
+   800,
+   1200
+  ],
+  "w": 1200,
+  "h": 1160
+ },
  "kette-gestein": {
   "widths": [
    667

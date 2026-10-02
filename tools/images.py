@@ -27,6 +27,11 @@ IMAGES = {
     "szene-nugget":      ("commons/gold-nugget-james-st-john.jpg", (120, 0, 3531, 2000)),
     "szene-glut":        ("commons/pouring-gold-allen-drebert.jpg", None),
     "szene-werkbank":    ("commons/jewelers-workbench-thomas-farley.jpg", (0, 1250, 3840, 3650)),
+    # Ankauf-Kacheln (Hintergründe)
+    "kachel-zahngold":   ("commons/zahngold-kronen-bin-im-garten.jpg", (150, 80, 1350, 1240)),
+    "kachel-muenzen":    ("commons/krugerrand-gage-skidmore.jpg", (430, 0, 1640, 1317)),
+    "kachel-barren":     ("commons/goldbarren-stevebidmead.jpg", None),
+    "kachel-silber":     ("commons/silbermuenzen-argenberg.jpg", (80, 40, 1820, 1276)),
 }
 
 
@@ -38,8 +43,12 @@ def widths_for(w):
 
 
 def main():
+    import sys
+    only = set(sys.argv[1:])
     manifest = {}
     for name, (src, crop) in IMAGES.items():
+        if only and name not in only:
+            continue
         im = Image.open(SRC / src).convert("RGB")
         if crop:
             im = im.crop(crop)
