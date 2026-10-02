@@ -1,0 +1,45 @@
+name: Website veröffentlichen
+
+# Veröffentlicht nur die Website-Dateien (siehe .deployignore) auf GitHub Pages.
+# Läuft bei jedem Push auf main und nach jedem Goldpreis-Update
+# (Commits der Goldpreis-Action lösen „push“ bewusst nicht aus → workflow_run).
+on:
+  push:
+    branches: [main]
+  workflow_run:
+    workflows: ["Goldpreis aktualisieren"]
+    types: [completed]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - name: Website-Dateien zusammenstellen
+        run: |
+          mkdir _site
+          rsync -a --exclude-from=.deployignore ./ _site/
+          echo "Veröffentlichte Dateien: $(find _site -type f | wc -l)"
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+      - id: deployment
+        uses: actions/deploy-pages@v4

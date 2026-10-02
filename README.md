@@ -63,34 +63,54 @@ node tools/serve.mjs          # http://127.0.0.1:8138 – verhält sich wie GitH
 Werkzeuge (optional): `npm i`, dann
 `node tools/check.mjs --platzhalter` (SEO-/Link-Check + Platzhalterliste) · `node tools/shoot.mjs /` (Screenshots 375/768/1440) · `node tools/render-poster.mjs` / `node tools/render-og.mjs` (Ring-Poster, OG-Bilder, Favicons) · `node tools/build-vendor.mjs` (Bibliotheken aktualisieren). Die Playwright-Skripte nutzen das installierte Chrome.
 
+## Vor dem Launch: noch offene Angaben
+
+Alles andere ist fertig (0 sichtbare Platzhalter, `node tools/check.mjs`). Diese Angaben fehlen noch:
+
+| Angabe | Wo eintragen |
+|---|---|
+| **Öffnungszeiten** neuer Laden | `js/config.js` (`OEFFNUNGSZEITEN`), `tools/partials/footer.html`, `tools/partials/ld-business.html` (openingHoursSpecification), Tabellen in `index.html` + `kontakt/index.html` (`data-hours`), Fallback-Text `Mo – Fr …` (Suche nach `data-open-text`), Aside auf `uhrenbatterie-wechseln-gersthofen/` |
+| **WhatsApp-Nummer** | nur `js/config.js` → `WHATSAPP_NUMMER = '49…'` (alle Buttons übernehmen sie automatisch) |
+| **Eröffnungsangebot** (falls es eins gibt) | Kommentare `TODO: ggf. Eröffnungsangebot` in `index.html` und `eroeffnung/index.html` |
+| **USt-IdNr.** (falls vorhanden) | auskommentierter Block in `impressum/index.html` |
+| **E-Mail fürs Kontaktformular** | `kontakt/index.html` (`action="https://formsubmit.co/…"`), Impressum, Datenschutz, Footer-Partial, `ld-business` |
+| **Freepik-Fotos**: Lizenz klären | Galerie, einige Kacheln/Seiten – sonst durch eigene Fotos ersetzen |
+
+Nach Änderungen an `tools/partials/*`: `node tools/sync-partials.mjs`, danach `node tools/check.mjs`.
+Weitere `TODO`-Kommentare im Code markieren optionale Ergänzungen (Fotos, Barren-/Uhrenankauf, Zeitangaben, Ohrloch-Details, Trauring-Sortiment).
+
 ## Deployment auf GitHub Pages
+
+Veröffentlicht wird über GitHub Actions (`.github/workflows/deploy.yml`) – **nur die Website-Dateien**; was ausgeschlossen ist, steht in `.deployignore` (Werkzeuge, Originalbilder, Markdown, package.json). Nach jedem Goldpreis-Update wird automatisch neu veröffentlicht.
 
 1. **Repository anlegen** (z. B. `schmuckoase-gersthofen`) und pushen:
    ```bash
-   git add -A && git commit -m "Neue Website"
    git remote add origin git@github.com:<konto>/schmuckoase-gersthofen.git
    git push -u origin main
    ```
-2. **Pages aktivieren:** *Settings → Pages → Build and deployment → Source: Deploy from a branch → `main` / `/ (root)`*.
-3. **Action darf schreiben:** *Settings → Actions → General → Workflow permissions → Read and write permissions*. Danach unter *Actions* den Workflow einmal manuell starten.
-4. **Domain:** Die Datei `CNAME` enthält bereits `schmuckoase-gersthofen.de`. Beim Domain-Anbieter folgende Einträge setzen:
+2. **Pages aktivieren:** *Settings → Pages → Build and deployment → Source: **GitHub Actions***.
+3. **Goldpreis-Action darf schreiben:** *Settings → Actions → General → Workflow permissions → Read and write permissions*. Danach unter *Actions* „Goldpreis aktualisieren“ einmal manuell starten (veröffentlicht anschließend automatisch).
+4. **Domain:** Unter *Settings → Pages → Custom domain* `schmuckoase-gersthofen.de` eintragen. Beim Domain-Anbieter:
    - `A` für `@` auf `185.199.108.153`, `185.199.109.153`, `185.199.110.153`, `185.199.111.153`
    - `AAAA` für `@` auf `2606:50c0:8000::153`, `2606:50c0:8001::153`, `2606:50c0:8002::153`, `2606:50c0:8003::153`
    - `CNAME` für `www` auf `<konto>.github.io`
-5. Unter *Settings → Pages* die Domain prüfen lassen, danach **„Enforce HTTPS“** aktivieren. Optional die Domain unter *Settings → Pages → Verified domains* verifizieren.
+   - alte Einträge, die auf den WordPress-Server zeigen, entfernen
+5. Nach der DNS-Prüfung **„Enforce HTTPS“** aktivieren. Empfohlen: Domain unter *Settings → Pages → Verified domains* verifizieren (schützt vor Domain-Übernahme).
 6. **Nach dem Livegang:**
-   - Alte WordPress-Instanz vollständig abschalten. Sie war kompromittiert, siehe `CONTENT.md`.
-   - In der Google Search Console die `sitemap.xml` einreichen und nach Spam-URLs sowie manuellen Maßnahmen schauen.
-   - Im Google-Unternehmensprofil Adresse, Öffnungszeiten und Website aktualisieren.
-   - Das Kontaktformular einmal absenden. FormSubmit schickt eine Aktivierungs-Mail an die Empfängeradresse, die bestätigt werden muss.
-   - Rich-Results-Test für Startseite, `/goldankauf-gersthofen/` und `/eroeffnung/` ausführen.
+   - Alte WordPress-Instanz vollständig abschalten und löschen – sie war kompromittiert (Spam-Links), siehe `CONTENT.md`.
+   - Alte Adressen (`/goldankauf/`, `/uber-uns/` …) leiten bereits auf die neuen Seiten weiter (`tools/redirects.mjs`).
+   - Google Search Console: Domain bestätigen, `sitemap.xml` einreichen, unter „Sicherheit & manuelle Maßnahmen“ und „Seiten“ nach alten Spam-URLs schauen.
+   - Google-Unternehmensprofil für die Bahnhofstraße 18 anlegen bzw. umziehen (Adresse, Öffnungszeiten, Website, Fotos).
+   - Kontaktformular einmal absenden: FormSubmit schickt eine Aktivierungs-Mail an die Empfängeradresse.
+   - Rich-Results-Test für Startseite, `/goldankauf-gersthofen/` und `/eroeffnung/`.
+   - Abschlusstest auf iPhone und Android unter der echten Domain.
 
 ## Barrierefreiheit und Motion
 
 - Bei `prefers-reduced-motion: reduce` entfallen alle Animationen: kein Intro, kein 3D (es bleibt das Poster), keine Pin-Sektion, kein Marquee und kein Smooth Scrolling.
 - Der Rechner ist komplett per Tastatur bedienbar: Radiogroup mit Pfeiltasten, Home und End, nativer Slider, Zahlenfeld. Das Ergebnis wird per `aria-live` angesagt.
 - Lightbox und Punzen-Hilfe nutzen native `<dialog>`-Elemente (Esc, Fokusrückgabe).
-- Der 3D-Ring lädt nur auf geeigneten Geräten. Auf Touch-Geräten startet er erst bei der ersten Interaktion, auf Desktop nach der ersten Interaktion bzw. spätestens 2,5 s nach dem Laden. Er rendert nur, solange er sichtbar ist, pausiert bei Tab-Wechsel und begrenzt `devicePixelRatio` auf 2.
+- Der 3D-Ring lädt nur auf geeigneten Geräten – bei der ersten Interaktion, spätestens ca. 2,5 s (Desktop) bzw. 3,5 s (Handy) nach dem Laden; bis dahin zeigt ein identisches Standbild denselben Ring. Er rendert nur, solange er sichtbar ist, pausiert bei Tab-Wechsel und begrenzt `devicePixelRatio` auf 2.
 
 ## Lizenzen
 

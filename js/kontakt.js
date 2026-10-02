@@ -35,6 +35,5 @@ export function init() {
     btn.textContent = 'Wird gesendet …';
   });
 
-  for (const el of document.querySelectorAll('[data-wa-missing]')) el.hidden = !!WHATSAPP_NUMMER;
   if (!WHATSAPP_NUMMER) document.querySelectorAll('[data-wa-main]').forEach((a) => a.setAttribute('aria-disabled', 'true'));
 }

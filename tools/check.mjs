@@ -27,6 +27,7 @@ const placeholders = new Map();
 for (const file of await htmlFiles(ROOT)) {
   const rel = relative(ROOT, file).split(sep).join('/');
   const html = await readFile(file, 'utf8');
+  if (html.includes('http-equiv="refresh"')) continue; // Weiterleitungsseite (tools/redirects.mjs)
   const title = decode(html.match(/<title>([^<]*)<\/title>/)?.[1] || '');
   const desc = decode(html.match(/<meta name="description" content="([^"]*)"/)?.[1] || '');
   const h1 = (html.match(/<h1[\s>]/g) || []).length;

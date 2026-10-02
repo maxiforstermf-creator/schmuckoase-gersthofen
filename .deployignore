@@ -1,0 +1,13 @@
+# Wird NICHT veröffentlicht (rsync --exclude-from, siehe .github/workflows/deploy.yml)
+.git/
+.github/
+.gitignore
+.gitattributes
+.deployignore
+node_modules/
+tools/
+assets/img/_orig/
+graphify-out/
+*.md
+package.json
+package-lock.json
