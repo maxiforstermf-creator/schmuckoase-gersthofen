@@ -8,6 +8,7 @@ import { fileURLToPath } from 'node:url';
 
 const ROOT = fileURLToPath(new URL('..', import.meta.url));
 const PORT = Number(process.argv[2] || 8138);
+const NOCACHE = process.argv.includes('--no-cache'); // Vorschau aufs Handy: immer frische Dateien
 const HOST = process.argv[3] || '127.0.0.1'; // '0.0.0.0' = im WLAN erreichbar (z. B. fürs Handy)
 const TYPES = {
   '.html': 'text/html; charset=utf-8', '.css': 'text/css; charset=utf-8', '.js': 'text/javascript; charset=utf-8',
@@ -31,7 +32,7 @@ createServer(async (req, res) => {
   } catch { file = join(ROOT, '404.html'); status = 404; }
   let body = await readFile(file);
   const ext = extname(file);
-  const headers = { 'Content-Type': TYPES[ext] || 'application/octet-stream', 'Cache-Control': 'max-age=600' };
+  const headers = { 'Content-Type': TYPES[ext] || 'application/octet-stream', 'Cache-Control': NOCACHE ? 'no-store' : 'max-age=600' };
   if (COMPRESS.has(ext) && /gzip/.test(req.headers['accept-encoding'] || '')) { body = gzipSync(body, { level: 9 }); headers['Content-Encoding'] = 'gzip'; }
   res.writeHead(status, headers);
   res.end(body);
