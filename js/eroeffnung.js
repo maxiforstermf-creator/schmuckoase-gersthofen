@@ -49,7 +49,7 @@ export function init() {
         `DTEND:${icsDate(end)}`,
         `SUMMARY:${esc('Neueröffnung SchmuckOase Gersthofen')}`,
         `LOCATION:${esc(ort)}`,
-        `DESCRIPTION:${esc('Neueröffnung im City Center Gersthofen – Juwelier, Goldankauf und Service.\nhttps://schmuckoase-gersthofen.de/eroeffnung/')}`,
+        `DESCRIPTION:${esc('Neueröffnung in der Bahnhofstraße 18, Gersthofen (gegenüber dem City Center) – Juwelier, Goldankauf und Service.\nhttps://schmuckoase-gersthofen.de/eroeffnung/')}`,
         'URL:https://schmuckoase-gersthofen.de/eroeffnung/',
         'END:VEVENT', 'END:VCALENDAR', '',
       ].join('\r\n');

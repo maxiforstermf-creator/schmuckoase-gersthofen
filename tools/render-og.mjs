@@ -4,7 +4,7 @@ import { chromium } from 'playwright';
 const BASE = process.env.BASE || 'http://127.0.0.1:8138';
 const jobs = [
   { file: 'og-default', q: {} },
-  { file: 'og-eroeffnung', q: { over: 'Neueröffnung am 1. Oktober 2026 · City Center Gersthofen', title: 'Neu <em class="gold-text">eröffnet.</em>', sub: 'Juwelier · Goldankauf · Meisterservice – seit über 30 Jahren in Gersthofen' } },
+  { file: 'og-eroeffnung', q: { over: 'Neueröffnung am 1. Oktober 2026 · Bahnhofstraße 18', title: 'Neu <em class="gold-text">eröffnet.</em>', sub: 'Neuer Inhaber Ercan Nazli · Familientradition seit über 30 Jahren' } },
   { file: 'og-goldankauf', q: { over: 'Goldankauf Gersthofen', title: 'Was ist Ihr Gold <em class="gold-text">wert?</em>', sub: 'Online-Goldrechner · Prüfung vor Ihren Augen · sofort Bargeld' } },
 ];
 const b = await chromium.launch({ channel: process.env.PW_CHANNEL || 'chrome' });

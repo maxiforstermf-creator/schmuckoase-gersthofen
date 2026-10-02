@@ -36,7 +36,7 @@ CONTENT.md                Inhalte der alten Website (Wayback Machine)
 | Seitentexte | direkt in der jeweiligen `index.html` |
 | Neue Bilder | Original nach `assets/img/_orig/`, Eintrag in `tools/images.py`, dann `python tools/images.py` und `node tools/sync-partials.mjs` |
 
-**Wichtig:** Adresse und Öffnungszeiten stehen sowohl in `js/config.js` (Live-Badge, Kalender, Karte) als auch im HTML (Footer-Partial, `ld-business`-Partial, Kontakt- und Startseite). Nach einer Änderung im Projekt nach `PLATZHALTER: Straße` suchen.
+**Wichtig:** Adresse (Bahnhofstraße 18) und Öffnungszeiten stehen sowohl in `js/config.js` (Live-Badge, Kalender, Karte) als auch im HTML (Footer-Partial, `ld-business`-Partial, Kontakt-, Start-, Eröffnungsseite, Impressum, Datenschutz). Bei Änderungen projektweit nach „Bahnhofstraße 18“ suchen.
 
 `<picture data-pic="name">` wird vom Sync-Skript automatisch mit AVIF-/WebP-`srcset` gefüllt (Breiten 800/1400/2000, nie hochskaliert).
 

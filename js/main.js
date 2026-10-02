@@ -150,7 +150,7 @@ function initMap() {
     $('button', box)?.addEventListener('click', () => {
       const f = document.createElement('iframe');
       f.src = `https://www.google.com/maps?q=${encodeURIComponent(MAPS_QUERY)}&output=embed`;
-      f.title = 'Google Maps – Lage der SchmuckOase im City Center Gersthofen';
+      f.title = 'Google Maps – Lage der SchmuckOase, Bahnhofstraße 18, Gersthofen';
       f.loading = 'lazy';
       f.referrerPolicy = 'no-referrer-when-downgrade';
       box.replaceChildren(f);

@@ -21,14 +21,14 @@ export const EROEFFNUNG_DAUER_STUNDEN = 8;
 
 /** Adresse des neuen Ladens. */
 export const ADRESSE = {
-  strasse: '[PLATZHALTER: Straße + Nr. des neuen Ladens]', // TODO
-  zusatz: 'City Center Gersthofen',
+  strasse: 'Bahnhofstraße 18',
+  zusatz: 'gegenüber dem City Center',
   plz: '86368',
   ort: 'Gersthofen',
 };
 
 /** Ziel für Route & Karte (Suchbegriff für Google Maps). */
-export const MAPS_QUERY = 'Schmuck Oase City Center Gersthofen'; // TODO: nach Umzug auf neue Adresse prüfen
+export const MAPS_QUERY = 'Bahnhofstraße 18, 86368 Gersthofen';
 
 /** Öffnungszeiten (Europe/Berlin). Wochentag: 1 = Montag … 7 = Sonntag.
  *  Werte von der alten Website – TODO: für den neuen Laden bestätigen. */
