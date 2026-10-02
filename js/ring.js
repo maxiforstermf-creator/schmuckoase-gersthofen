@@ -225,32 +225,13 @@ async function build(canvas, opts) {
   await pause();
   new ResizeObserver(resize).observe(canvas);
 
-  /* Maus (Desktop) / Neigung (Mobile, erst nach Tap) */
+  /* Maus (Desktop): Ring folgt leicht dem Zeiger */
   const target = { x: 0, y: 0 }, cur = { x: 0, y: 0 };
   addEventListener('pointermove', (e) => {
     if (e.pointerType !== 'mouse') return;
     target.x = (e.clientY / innerHeight - 0.5) * 0.42;
     target.y = (e.clientX / innerWidth - 0.5) * 0.7;
   }, { passive: true });
-
-  const tiltBtn = document.querySelector('.hero__tilt');
-  if (tiltBtn && coarse && 'DeviceOrientationEvent' in window) {
-    tiltBtn.classList.add('is-available');
-    tiltBtn.addEventListener('click', async () => {
-      try {
-        if (typeof DeviceOrientationEvent.requestPermission === 'function') {
-          if ((await DeviceOrientationEvent.requestPermission()) !== 'granted') return;
-        }
-        addEventListener('deviceorientation', (e) => {
-          if (e.beta == null) return;
-          target.x = T.MathUtils.clamp((e.beta - 45) / 90, -0.5, 0.5) * 0.6;
-          target.y = T.MathUtils.clamp(e.gamma / 45, -1, 1) * 0.6;
-        }, { passive: true });
-        tiltBtn.setAttribute('aria-pressed', 'true');
-        tiltBtn.querySelector('span').textContent = 'Neigung aktiv';
-      } catch {}
-    });
-  }
 
   /* Scroll-Kopplung: beim Scrollen dreht und neigt sich der Ring (geglättet) */
   const page = opts.mode === 'page';
