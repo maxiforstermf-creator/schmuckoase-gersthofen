@@ -27,19 +27,8 @@ function initLinks() {
 function initHeader() {
   const header = $('#header');
   if (!header) return;
-  let ticking = false, lastY = scrollY;
-  const mobile = matchMedia('(max-width: 899px)');
-  const update = () => {
-    const y = scrollY;
-    header.classList.toggle('is-scrolled', y > 24);
-    // Handy: beim Runterscrollen ausblenden (mehr Platz), beim Hochscrollen sofort zeigen
-    if (mobile.matches && !document.body.classList.contains('menu-open')) {
-      if (y > lastY + 6 && y > 140) header.classList.add('is-hidden');
-      else if (y < lastY - 6 || y < 140) header.classList.remove('is-hidden');
-    } else header.classList.remove('is-hidden');
-    lastY = y; ticking = false;
-  };
-  header.addEventListener('focusin', () => header.classList.remove('is-hidden'));
+  let ticking = false;
+  const update = () => { header.classList.toggle('is-scrolled', scrollY > 24); ticking = false; };
   addEventListener('scroll', () => { if (!ticking) { ticking = true; requestAnimationFrame(update); } }, { passive: true });
   update();
 

@@ -65,7 +65,7 @@
 
 /* ── 3 Reset / Base ──────────────────────────────────────────────────────── */
 *, *::before, *::after { box-sizing: border-box; }
-html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; scroll-padding-top: calc(var(--header-h) + var(--safe-top) + 16px); }
+html { background: var(--c-black); -webkit-text-size-adjust: 100%; text-size-adjust: 100%; scroll-padding-top: calc(var(--header-h) + var(--safe-top) + 16px); }
 html:not(.has-lenis) { scroll-behavior: smooth; }
 body {
   margin: 0;
@@ -323,8 +323,7 @@ dialog { color: inherit; }
 }
 .header.is-scrolled {
   --header-h: 66px;
-  background: rgba(11,10,9,.9); border-color: rgba(201,164,92,.14);
-  -webkit-backdrop-filter: blur(18px) saturate(1.3); backdrop-filter: blur(18px) saturate(1.3);
+  background: var(--c-black); border-color: rgba(201,164,92,.14); /* voll deckend: Safari färbt die Statusleiste mit, nichts scheint durch */
 }
 .header.is-hidden { transform: translateY(-100%); }
 .header__inner { height: 100%; display: flex; align-items: center; justify-content: space-between; gap: 24px; }
@@ -790,8 +789,7 @@ body.menu-open { overflow: hidden; }
 
 .sticky-bar {
   position: fixed; left: 0; right: 0; bottom: 0; z-index: 90; display: grid; grid-template-columns: repeat(3, 1fr);
-  padding-bottom: env(safe-area-inset-bottom); background: rgba(11,10,9,.86); border-top: 1px solid rgba(201,164,92,.25);
-  -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px);
+  padding-bottom: env(safe-area-inset-bottom); background: var(--c-black); border-top: 1px solid rgba(201,164,92,.25); /* voll deckend (s. Header) */
   transform: translateY(110%); transition: transform .6s var(--ease);
 }
 .sticky-bar.is-visible { transform: none; }
