@@ -171,8 +171,8 @@ function initModules() {
   const canvas = $('.hero__canvas') || $('.page-hero__canvas');
   if (canvas) {
     const opts = canvas.classList.contains('page-hero__canvas')
-      ? { mode: 'page', tiltX: Number(canvas.dataset.tilt ?? 0.78), angle: Number(canvas.dataset.angle ?? 2.2) }
-      : {};
+      ? { mode: 'page', tiltX: Number(canvas.dataset.tilt ?? 0.78), angle: Number(canvas.dataset.angle ?? 5.2) }
+      : { angle: 4.7 };
     const start = () => idle(() => import('./ring.js').then((m) => m.init(canvas, opts)).catch(() => {}), 1500);
     document.readyState === 'complete' ? start() : addEventListener('load', start, { once: true });
   }

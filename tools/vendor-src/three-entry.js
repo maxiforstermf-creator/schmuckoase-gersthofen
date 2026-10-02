@@ -3,6 +3,6 @@
 export {
   WebGLRenderer, Scene, PerspectiveCamera, PMREMGenerator, MeshPhysicalMaterial,
   MeshBasicMaterial, LatheGeometry, BoxGeometry, PlaneGeometry, Vector2, Mesh, Group, Color,
-  Points, BufferGeometry, Float32BufferAttribute, ShaderMaterial, AdditiveBlending, BackSide,
+  Points, BufferGeometry, Float32BufferAttribute, ShaderMaterial, AdditiveBlending, BackSide, CanvasTexture,
   ACESFilmicToneMapping, SRGBColorSpace, MathUtils
 } from 'three';

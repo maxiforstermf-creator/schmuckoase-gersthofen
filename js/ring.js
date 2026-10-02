@@ -37,6 +37,39 @@ function whenEngaged(cb) {
   const timer = coarse ? 0 : setTimeout(go, 2500);
 }
 
+/* Gravur „SchmuckOase“ außen umlaufend: Canvas-Texturen für Farbe/Relief und Rauheit.
+   UV der Lathe-Geometrie: u = Umfang, v = Profil (Außenmitte bei v = 0.5). */
+const FLIP_X = 1, FLIP_Y = 1; // Leserichtung der Gravur auf der Außenseite
+async function gravur(T, renderer, { umfang, perimeter }) {
+  try {
+    const face = new FontFace('Cormorant Garamond Gravur', 'url(/assets/fonts/cormorant-garamond-latin-500-italic.woff2)', { style: 'italic', weight: '500' });
+    document.fonts.add(await face.load());
+  } catch {}
+  const W = 4096, H = 1024;
+  const pxU = W / umfang, pxV = H / perimeter;   // Pixel je Szenen-Einheit entlang Umfang bzw. Profil
+  const sx = pxU / pxV;                          // Verzerrung u/v ausgleichen
+  const fontPx = Math.round(0.21 * pxV);         // Schrifthöhe ≈ 0,21 Einheiten (Ringbreite 0,52)
+  const make = (bg, ink) => {
+    const c = document.createElement('canvas'); c.width = W; c.height = H;
+    const g = c.getContext('2d');
+    g.fillStyle = bg; g.fillRect(0, 0, W, H);
+    g.fillStyle = ink; g.textAlign = 'center'; g.textBaseline = 'middle';
+    g.font = `italic 500 ${fontPx}px "Cormorant Garamond Gravur", Georgia, serif`;
+    for (const x of [W * 0.25, W * 0.75]) {         // zweimal umlaufend
+      g.save(); g.translate(x, H / 2); g.scale(FLIP_X * sx, FLIP_Y);
+      g.fillText('SchmuckOase', 0, 4);
+      g.restore();
+    }
+    const t = new T.CanvasTexture(c);
+    t.anisotropy = renderer.capabilities.getMaxAnisotropy();
+    return t;
+  };
+  const color = make('#ffffff', '#6f5326');       // Buchstaben dunkler + tiefer (Bump)
+  color.colorSpace = T.SRGBColorSpace;
+  const rough = make('#262626', '#8c8c8c');       // poliert 0.15 · Gravur matt ≈ 0.55
+  return { color, rough };
+}
+
 export function init(canvas, opts = {}) {
   if (opts.still) return build(canvas, opts);
   if (!deviceOK()) return;
@@ -78,18 +111,31 @@ async function build(canvas, opts) {
   pmrem.dispose();
 
   /* Ringschiene: Querschnitt als Superellipse („Komfortprofil“), per Lathe gedreht */
-  const R = 1.0, halfW = 0.09, halfH = 0.26, n = 3.2, steps = 72;
-  const profile = [];
-  for (let i = 0; i <= steps; i++) {
-    const a = (i / steps) * Math.PI * 2;
+  const R = 1.0, halfW = 0.09, halfH = 0.26, n = 3.2, steps = 120;
+  // Dicht abtasten, dann nach Bogenlänge gleichmäßig verteilen → UV v ist linear zur Oberfläche
+  // (sonst wird die Gravur-Textur in der Höhe verzerrt). Start auf der Innenseite → Außenmitte bei v = 0.5.
+  const dense = [];
+  for (let i = 0; i <= 1440; i++) {
+    const a = Math.PI + (i / 1440) * Math.PI * 2;
     const c = Math.cos(a), s = Math.sin(a);
-    const x = R + halfW + halfW * Math.sign(c) * Math.pow(Math.abs(c), 2 / n) * (c > 0 ? 1.0 : 0.82);
-    const y = halfH * Math.sign(s) * Math.pow(Math.abs(s), 2 / n);
-    profile.push(new T.Vector2(x, y));
+    dense.push([R + halfW + halfW * Math.sign(c) * Math.pow(Math.abs(c), 2 / n) * (c > 0 ? 1.0 : 0.82),
+                halfH * Math.sign(s) * Math.pow(Math.abs(s), 2 / n)]);
   }
-  const geo = new T.LatheGeometry(profile, 220);
+  const cum = [0];
+  for (let i = 1; i < dense.length; i++) cum.push(cum[i - 1] + Math.hypot(dense[i][0] - dense[i - 1][0], dense[i][1] - dense[i - 1][1]));
+  const perimeter = cum.at(-1);
+  const profile = [];
+  for (let k = 0, j = 0; k <= steps; k++) {
+    const target = (k / steps) * perimeter;
+    while (j < cum.length - 2 && cum[j + 1] < target) j++;
+    const f = (target - cum[j]) / (cum[j + 1] - cum[j] || 1);
+    profile.push(new T.Vector2(dense[j][0] + (dense[j + 1][0] - dense[j][0]) * f, dense[j][1] + (dense[j + 1][1] - dense[j][1]) * f));
+  }
+  const geo = new T.LatheGeometry(profile, 240);
+  const engr = await gravur(T, renderer, { umfang: 2 * Math.PI * (R + 2 * halfW), perimeter });
   const mat = new T.MeshPhysicalMaterial({
-    color: 0xe6c17a, metalness: 1, roughness: 0.15,
+    color: 0xe6c17a, metalness: 1, roughness: 1, roughnessMap: engr.rough,
+    map: engr.color, bumpMap: engr.color, bumpScale: 3.5,
     clearcoat: 0.25, clearcoatRoughness: 0.08, envMapIntensity: 1.15,
   });
   const ring = new T.Mesh(geo, mat);

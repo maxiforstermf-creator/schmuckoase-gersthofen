@@ -10,8 +10,8 @@ import { fileURLToPath } from 'node:url';
 const BASE = process.env.BASE || 'http://127.0.0.1:8138';
 const OUT = fileURLToPath(new URL('./_out/', import.meta.url));
 const shots = [
-  { name: 'ring-poster', size: 1400, angle: 0.55, time: 2.4, tilt: 0.62 },
-  { name: 'ring-mark', size: 900, angle: 2.2, time: 5.1, tilt: 0.78 },
+  { name: 'ring-poster', size: 1400, angle: 4.7, time: 2.4, tilt: 0.62 },
+  { name: 'ring-mark', size: 900, angle: 5.2, time: 5.1, tilt: 0.78 },
 ];
 
 const browser = await chromium.launch({ channel: process.env.PW_CHANNEL || 'chrome', args: ['--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist'] });
