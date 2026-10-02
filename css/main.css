@@ -84,6 +84,8 @@ button, input, select, textarea { font: inherit; color: inherit; }
 button { cursor: pointer; }
 h1, h2, h3, h4 { margin: 0; font-weight: 300; }
 p, ul, ol, dl, figure, blockquote { margin: 0; }
+p, li, dd, blockquote { text-wrap: pretty; } /* keine einzelnen Wörter in der letzten Zeile */
+@media (max-width: 559px) { p, li { hyphens: auto; -webkit-hyphens: auto; hyphenate-limit-chars: 10 4 4; } } /* lange deutsche Wörter auf schmalen Displays */
 ul[role="list"], ol[role="list"] { list-style: none; padding: 0; }
 ::selection { background: var(--c-gold); color: var(--c-black); }
 :focus-visible { outline: 2px solid var(--c-gold); outline-offset: 3px; border-radius: var(--radius); }
@@ -124,6 +126,7 @@ ul[role="list"], ol[role="list"] { list-style: none; padding: 0; }
 .lead { font-size: var(--fs-lead); line-height: 1.6; color: var(--c-text-2); max-width: 38em; }
 .muted { color: var(--c-text-2); }
 .small { font-size: var(--fs-small); }
+@media (max-width: 559px) { .hide-sm { display: none; } }
 .gold { color: var(--c-gold); }
 .gold-text {
   background: var(--g-gold); -webkit-background-clip: text; background-clip: text;
@@ -682,7 +685,7 @@ body.menu-open { overflow: hidden; }
 /* ── 12 Scroll-Story (WOW 3) ─────────────────────────────────────────────── */
 .story { position: relative; background: var(--c-black); }
 .story__head { padding-top: var(--section-y); }
-.story__list { list-style: none; margin: 0; padding: 0 0 var(--section-y); display: grid; gap: clamp(56px, 8vw, 96px); }
+.story__list { list-style: none; margin: 0 auto; padding: 0 0 var(--section-y); display: grid; gap: clamp(56px, 8vw, 96px); }
 .story__item { display: grid; gap: 24px; }
 .story__fig { aspect-ratio: 4 / 3; }
 .story__fig img { transform: scale(1.06); }
@@ -691,6 +694,12 @@ body.menu-open { overflow: hidden; }
 .story__text h3 { font: 400 var(--fs-h3)/1.1 var(--f-display); }
 .story__text p { color: var(--c-text-2); max-width: 30em; }
 .story__progress { display: none; }
+/* Desktop ohne Pinning (z. B. „Bewegung reduzieren“): Bild und Text nebeneinander, abwechselnd */
+@media (min-width: 900px) {
+  .story:not(.is-pinned) .story__item { grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); align-items: center; gap: clamp(40px, 5vw, 96px); }
+  .story:not(.is-pinned) .story__item:nth-child(even) { grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr); }
+  .story:not(.is-pinned) .story__item:nth-child(even) .story__fig { order: 2; }
+}
 
 /* Desktop: gepinnte Szenen (Klasse wird nur gesetzt, wenn GSAP aktiv ist) */
 .story.is-pinned .story__pin { position: relative; height: 100vh; overflow: hidden; }
@@ -720,6 +729,10 @@ body.menu-open { overflow: hidden; }
 .service svg { width: 36px; height: 36px; color: var(--c-gold); }
 .service h3 { font: 400 1.625rem/1.15 var(--f-display); }
 .service p { font-size: var(--fs-small); color: var(--c-text-2); }
+/* Pfeil zeigt: die Kachel ist ein Link */
+.service { position: relative; }
+.service::after { content: "→"; position: absolute; top: clamp(24px, 3vw, 40px); right: clamp(20px, 2vw, 32px); color: var(--c-gold); opacity: .55; transition: transform .4s var(--ease), opacity .4s var(--ease); }
+.service:hover::after, .service:focus-visible::after { opacity: 1; transform: translateX(6px); }
 .service .time { display: inline-flex; align-items: center; gap: 8px; font: 600 .6875rem/1.3 var(--f-ui); letter-spacing: .12em; text-transform: uppercase; color: var(--c-gold); }
 
 /* Eröffnung */
