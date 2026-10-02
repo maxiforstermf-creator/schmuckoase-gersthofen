@@ -1,0 +1,22 @@
+{
+  "name": "schmuckoase-gersthofen",
+  "private": true,
+  "type": "module",
+  "description": "Statische Website – kein Build-Step. Die devDependencies sind nur Werkzeuge (Vendor-Bundles, Bilder, Poster, Tests).",
+  "scripts": {
+    "serve": "node tools/serve.mjs 8138",
+    "sync": "node tools/sync-partials.mjs",
+    "goldpreis": "node tools/goldpreis.mjs",
+    "vendor": "node tools/build-vendor.mjs",
+    "poster": "node tools/render-poster.mjs",
+    "check": "node tools/check.mjs"
+  },
+  "devDependencies": {
+    "esbuild": "^0.28.2",
+    "gsap": "^3.15.0",
+    "lenis": "^1.3.26",
+    "lighthouse": "^13.5.0",
+    "playwright": "^1.63.0",
+    "three": "^0.186.1"
+  }
+}

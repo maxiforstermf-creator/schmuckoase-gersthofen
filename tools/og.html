@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="de"><head><meta charset="utf-8"><title>OG-Bild (Werkzeug)</title><meta name="robots" content="noindex">
+<link rel="stylesheet" href="/css/main.css">
+<style>
+  html,body{margin:0;width:1200px;height:630px;overflow:hidden}
+  body::after{opacity:.04}
+  .og{position:relative;width:1200px;height:630px;display:grid;grid-template-columns:1fr 520px;align-items:center;padding:0 0 0 72px;
+      background:radial-gradient(60% 80% at 78% 50%,rgba(201,164,92,.22),transparent 70%),#0B0A09}
+  .og img{width:620px;margin-left:-60px}
+  .og h1{font:300 92px/.95 var(--f-display);letter-spacing:-.02em;margin:22px 0 26px}
+  .og p{font:400 24px/1.4 var(--f-ui);color:#B8AD9E;margin:0}
+  .og .foot{position:absolute;left:72px;bottom:48px;display:flex;gap:28px;font:600 15px/1 var(--f-ui);letter-spacing:.2em;text-transform:uppercase;color:#C9A45C}
+  .og .rule{position:absolute;left:72px;right:72px;bottom:86px;height:1px;opacity:.35}
+</style></head>
+<body>
+<div class="og">
+  <div>
+    <span class="overline" id="over">Juwelier &amp; Goldankauf · Gersthofen</span>
+    <h1 id="title">Gold in neuem <em class="gold-text">Glanz.</em></h1>
+    <p id="sub">Neueröffnung im City Center Gersthofen</p>
+  </div>
+  <img src="/assets/img/ring-poster-1400.webp" alt="">
+  <span class="rule"></span>
+  <div class="foot"><span>SchmuckOase</span><span>schmuckoase-gersthofen.de</span></div>
+</div>
+<script>
+  const q = new URLSearchParams(location.search);
+  if (q.get('title')) document.getElementById('title').innerHTML = q.get('title');
+  if (q.get('sub')) document.getElementById('sub').textContent = q.get('sub');
+  if (q.get('over')) document.getElementById('over').textContent = q.get('over');
+</script>
+</body></html>

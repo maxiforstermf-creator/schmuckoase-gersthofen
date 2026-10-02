@@ -1,0 +1,15 @@
+<!doctype html>
+<html lang="de"><head><meta charset="utf-8"><title>Ring-Poster (Werkzeug)</title>
+<meta name="robots" content="noindex">
+<style>html,body{margin:0;background:transparent}canvas{width:var(--s,1200px);height:var(--s,1200px);display:block}</style></head>
+<body>
+<!-- Rendert ein Standbild des Hero-Rings. Aufruf über tools/render-poster.mjs (Playwright). -->
+<canvas id="c"></canvas>
+<script type="module">
+  import { init } from '/js/ring.js';
+  const q = new URLSearchParams(location.search);
+  const s = Number(q.get('size') || 1200);
+  document.documentElement.style.setProperty('--s', s + 'px');
+  await init(document.getElementById('c'), { still: true, angle: Number(q.get('angle') || 0.55), time: Number(q.get('time') || 2.4), tiltX: q.has('tilt') ? Number(q.get('tilt')) : undefined, pixelRatio: 1 });
+</script>
+</body></html>

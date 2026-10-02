@@ -1,0 +1,118 @@
+<div class="calc" data-calc data-metal="{{metal}}">
+  <div class="calc__inputs">
+    <div class="calc__step">
+      <div class="calc__label">
+        <h3 class="h3" id="calc-alloy-label">Welche Legierung?</h3>
+        <span class="calc__piece" data-calc-piece hidden></span>
+        <span class="num-step">01</span>
+      </div>
+      <p class="small muted" id="calc-alloy-hint">Die Zahl ist im Schmuckstück eingestempelt – meist innen im Ring oder am Verschluss.</p>
+      <div class="alloys" role="radiogroup" aria-labelledby="calc-alloy-label" aria-describedby="calc-alloy-hint" data-calc-alloys>
+        <!-- Kacheln werden aus js/rechner.js erzeugt -->
+      </div>
+    </div>
+    <div class="calc__step">
+      <div class="calc__label">
+        <h3 class="h3" id="calc-weight-label">Wie schwer?</h3>
+        <span class="num-step">02</span>
+      </div>
+      <svg class="scale" viewBox="0 0 420 190" aria-hidden="true" data-calc-scale>
+        <defs>
+          <linearGradient id="scaleGold" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#F3DFA2"/><stop offset=".45" stop-color="#C9A45C"/><stop offset="1" stop-color="#8E6B2F"/></linearGradient>
+        </defs>
+        <!-- Sockel + Säule -->
+        <path d="M150 182h120M175 182l10-14h50l10 14" fill="none" stroke="#2E2924" stroke-width="1.5"/>
+        <path d="M210 168V40" stroke="#C9A45C" stroke-width="1.5"/>
+        <circle cx="210" cy="36" r="5" fill="none" stroke="#C9A45C" stroke-width="1.5"/>
+        <path d="M204 24l6-10 6 10" fill="none" stroke="#C9A45C" stroke-width="1.2"/>
+        <!-- Balken (dreht um 210/36) -->
+        <g class="beam" style="transform-origin:210px 36px">
+          <path d="M70 36h280" stroke="#C9A45C" stroke-width="2"/>
+          <circle cx="70" cy="36" r="3" fill="#C9A45C"/><circle cx="350" cy="36" r="3" fill="#C9A45C"/>
+        </g>
+        <!-- Linke Schale: Gold -->
+        <g class="pan-l">
+          <path d="M70 36L42 116M70 36l28 80" stroke="#8E6B2F" stroke-width=".8"/>
+          <path d="M34 116h72a36 12 0 0 1-72 0Z" fill="#171513" stroke="#C9A45C" stroke-width="1.2"/>
+          <g data-calc-pile transform="translate(70 116)">
+            <ellipse class="nug" cx="0" cy="-6" rx="10" ry="6" fill="url(#scaleGold)"/>
+          </g>
+        </g>
+        <!-- Rechte Schale: Gewichte -->
+        <g class="pan-r">
+          <path d="M350 36l-28 80M350 36l28 80" stroke="#8E6B2F" stroke-width=".8"/>
+          <path d="M314 116h72a36 12 0 0 1-72 0Z" fill="#171513" stroke="#C9A45C" stroke-width="1.2"/>
+          <path d="M340 116v-10h20v10M344 106v-4h12v4" fill="none" stroke="#B8AD9E" stroke-width="1"/>
+        </g>
+      </svg>
+      <div class="weight">
+        <label class="visually-hidden" for="calc-range">Gewicht in Gramm (Schieberegler)</label>
+        <input class="range" id="calc-range" type="range" min="0" max="1000" step="1" value="500" data-calc-range>
+        <div class="weight__num">
+          <label class="visually-hidden" for="calc-weight">Gewicht in Gramm</label>
+          <input id="calc-weight" type="number" inputmode="decimal" min="0.1" max="5000" step="0.1" value="10" data-calc-weight>
+          <span aria-hidden="true">g</span>
+        </div>
+      </div>
+      <div class="presets" aria-label="Typische Gewichte">
+        <button type="button" data-preset="2">Ring ≈ 2 g</button>
+        <button type="button" data-preset="5">Ohrringe ≈ 5 g</button>
+        <button type="button" data-preset="15">Kette ≈ 15 g</button>
+        <button type="button" data-preset="30">Armband ≈ 30 g</button>
+      </div>
+      <button class="calc__add" type="button" data-calc-add>+ Weiteres Stück hinzufügen <span class="small muted">z. B. Kette 585 und Ring 750</span></button>
+    </div>
+  </div>
+
+  <div class="result" data-calc-result>
+    <ul class="calc__items" data-out="items" aria-label="Ihre Stücke" hidden></ul>
+    <dl>
+      <div class="result__row"><dt data-out="alloy-label">Legierung</dt><dd class="num" data-out="alloy">585 / 1000</dd></div>
+      <div class="result__row"><dt data-out="fine-label">Feingoldanteil</dt><dd class="num" data-out="fine">–</dd></div>
+      <div class="result__row"><dt data-out="spot-label">Goldkurs je Gramm</dt><dd class="num" data-out="spot">–</dd></div>
+      <div class="result__main"><dt data-out="value-label">Materialwert</dt><dd class="result__value num gold-text" data-out="value">– €</dd></div>
+    </dl>
+    <p class="result__quote" data-out="quote" hidden></p>
+    <p class="result__stand" data-out="stand"><svg class="icon" aria-hidden="true"><use href="/assets/icons.svg#i-clock"/></svg><span>Kurs wird geladen …</span></p>
+    <p class="visually-hidden" aria-live="polite" aria-atomic="true" data-out="live"></p>
+    <p class="result__note">Unverbindlicher Materialwert auf Basis des Börsenkurses. Der verbindliche Ankaufspreis wird nach Prüfung im Laden ermittelt. Beschädigungen, Lötstellen sowie eingesetzte Steine oder Perlen werden dabei berücksichtigt und können den Preis beeinflussen.</p>
+    <div class="btn-row">
+      <a class="btn btn--solid" href="/kontakt/#whatsapp" data-wa-calc data-magnetic><svg aria-hidden="true"><use href="/assets/icons.svg#i-whatsapp"/></svg>Foto per WhatsApp schicken</a>
+      <a class="btn" href="/kontakt/?anliegen=bewertung#formular" data-magnetic><svg aria-hidden="true"><use href="/assets/icons.svg#i-calendar"/></svg>Termin zur Bewertung</a>
+    </div>
+  </div>
+</div>
+<noscript><p class="muted">Der Rechner benötigt JavaScript. Die aktuellen Richtwerte je Gramm finden Sie in der Tabelle unten – oder rufen Sie uns an: <a href="tel:+49821497901">0821 497901</a>.</p></noscript>
+
+<dialog class="dialog" id="punzen-hilfe" aria-labelledby="punzen-title">
+  <form method="dialog"><button class="dialog__close" aria-label="Schließen"><svg class="icon" aria-hidden="true"><use href="/assets/icons.svg#i-close"/></svg></button></form>
+  <div class="dialog__body">
+    <div class="punzen">
+      <svg viewBox="0 0 200 200" aria-hidden="true">
+        <defs><linearGradient id="pzGold" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#F3DFA2"/><stop offset=".5" stop-color="#C9A45C"/><stop offset="1" stop-color="#8E6B2F"/></linearGradient>
+          <clipPath id="pzLens"><circle cx="118" cy="92" r="46"/></clipPath></defs>
+        <ellipse cx="88" cy="110" rx="62" ry="62" fill="none" stroke="url(#pzGold)" stroke-width="12"/>
+        <g clip-path="url(#pzLens)">
+          <rect x="60" y="40" width="120" height="110" fill="#171513"/>
+          <ellipse cx="88" cy="110" rx="62" ry="62" fill="none" stroke="url(#pzGold)" stroke-width="40" transform="translate(-44 -48) scale(1.5)"/>
+          <text x="116" y="102" text-anchor="middle" font-family="Manrope, sans-serif" font-weight="600" font-size="20" fill="#3A2C14" transform="rotate(-18 116 96)">585</text>
+        </g>
+        <circle cx="118" cy="92" r="46" fill="none" stroke="#F4EEE4" stroke-width="3"/>
+        <path d="M151 125l34 34" stroke="#F4EEE4" stroke-width="8" stroke-linecap="round"/>
+      </svg>
+      <div class="stack">
+        <h2 class="h3" id="punzen-title">Wo finde ich den <em>Stempel?</em></h2>
+        <p class="muted small">Der Feingehalt ist als kleine Zahl eingeschlagen („Punze“). Mit einer Lupe oder der Handykamera im Makromodus ist sie gut zu erkennen:</p>
+        <ul class="small muted">
+          <li><strong>Ringe:</strong> auf der Innenseite der Ringschiene</li>
+          <li><strong>Ketten &amp; Armbänder:</strong> am Verschluss oder am kleinen Plättchen daneben</li>
+          <li><strong>Ohrringe:</strong> am Stecker oder am Bügel</li>
+          <li><strong>Anhänger:</strong> an der Öse oder auf der Rückseite</li>
+        </ul>
+        <p class="muted small">Die Zahl gibt den Anteil des reinen Edelmetalls in Tausendsteln an: <strong>585</strong> heißt 58,5 % reines Gold, <strong>925</strong> heißt 92,5 % reines Silber. Tippen Sie auf Ihren Stempel:</p>
+        <div class="punzen__list" data-punzen-list></div>
+        <p class="muted small">Kein Stempel zu finden? Kein Problem – wir prüfen Ihr Stück im Laden, direkt vor Ihren Augen.</p>
+      </div>
+    </div>
+  </div>
+</dialog>
