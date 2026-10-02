@@ -4,3 +4,6 @@ Thumbs.db
 *.log
 graphify-out/
 /tools/_out/
+
+# Freepik-Originale: nur lokal (Lizenz erlaubt keine Weitergabe der Originaldateien)
+/assets/img/_orig/*.jpg
