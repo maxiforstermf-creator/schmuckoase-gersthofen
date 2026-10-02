@@ -70,6 +70,13 @@ for (const d of USE) {
         }
       }
       for (const img of document.querySelectorAll('img')) if (img.complete && img.naturalWidth === 0 && img.getAttribute('src')) out.broken.push(img.currentSrc || img.src);
+      // ragt unten aus seiner Sektion (wird von der nächsten Sektion überdeckt)
+      for (const el of document.querySelectorAll('.card, .aside-card, .btn, figure, .faq, .table-wrap, .calc, .result, .buy-grid, .services')) {
+        const sec = el.closest('section, footer'); if (!sec) continue;
+        const cs = getComputedStyle(el); if (cs.position === 'fixed' || cs.display === 'none') continue;
+        const b = el.getBoundingClientRect(), sb = sec.getBoundingClientRect();
+        if (b.height && b.bottom > sb.bottom + 1) out.clipped.push(`ragt unten aus Sektion: ${label(el)} (${Math.round(b.bottom - sb.bottom)} px)`);
+      }
       for (const el of document.querySelectorAll('h1, h2, h3, .btn, .overline, .alloy__val, .rate__price, .result__value, td, th')) {
         if (el.scrollWidth > el.clientWidth + 2 && getComputedStyle(el).overflow !== 'visible') out.clipped.push(label(el));
         const b = el.getBoundingClientRect(); const p = el.parentElement?.getBoundingClientRect();
