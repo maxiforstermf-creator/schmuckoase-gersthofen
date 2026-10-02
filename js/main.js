@@ -218,6 +218,9 @@ function initModules() {
   }
 }
 
+// Film-Körnung als echtes, für Treffer durchlässiges Element (siehe .grain in main.css)
+document.body.append(Object.assign(document.createElement('div'), { className: 'grain', ariaHidden: 'true' }));
+document.body.append(Object.assign(document.createElement('div'), { className: 'edge-bottom', ariaHidden: 'true' }));
 initLinks();
 initIntro();
 initHeader();
