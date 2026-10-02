@@ -27,6 +27,11 @@ IMAGES = {
     "szene-nugget":      ("commons/gold-nugget-james-st-john.jpg", (120, 0, 3531, 2000)),
     "szene-glut":        ("commons/pouring-gold-allen-drebert.jpg", None),
     "szene-werkbank":    ("commons/jewelers-workbench-thomas-farley.jpg", (0, 1250, 3840, 3650)),
+    # Story „Alles rund ums Gold“ (Pexels-Lizenz)
+    "story-ankauf":      ("pexels/8442328.jpg", None),
+    "story-reparatur":   ("pexels/19781878.jpg", (0, 1300, 2600, 3250)),
+    "story-gravur":      ("pexels/16854106.jpg", (0, 1700, 2374, 3480)),
+    "story-verkauf":     ("pexels/20858959.jpg", None),
     # Ankauf-Kacheln (Hintergründe)
     "kachel-zahngold":   ("commons/zahngold-kronen-bin-im-garten.jpg", (150, 80, 1350, 1240)),
     "kachel-muenzen":    ("commons/krugerrand-gage-skidmore.jpg", (430, 0, 1640, 1317)),
