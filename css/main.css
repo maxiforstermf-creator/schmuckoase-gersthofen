@@ -585,6 +585,11 @@ body.menu-open { overflow: hidden; }
 .result__main dt { font: 600 var(--fs-over)/1 var(--f-ui); letter-spacing: var(--ls-over); text-transform: uppercase; color: var(--c-gold); }
 .result__value { margin: 0; font: 300 clamp(3.25rem, 2.2rem + 4vw, 5.5rem)/1 var(--f-display); letter-spacing: -.02em; }
 .result__quote { margin: 8px 0 0; font-size: 1.0625rem; }
+/* Klarer Hinweis direkt unter der Zahl: Börsenwert ≠ Ankaufspreis (keine falschen Erwartungen) */
+.result__hint { display: grid; grid-template-columns: auto 1fr; gap: 12px; margin-top: 16px; padding: 14px 16px; border: 1px solid rgba(201,164,92,.35); border-left: 2px solid var(--c-gold); border-radius: var(--radius); background: rgba(201,164,92,.07); }
+.result__hint .icon { width: 20px; height: 20px; margin-top: 2px; color: var(--c-gold); }
+.result__hint p { margin: 0; font-size: .875rem; line-height: 1.6; color: var(--c-text-2); }
+.result__hint strong { display: block; margin-bottom: 2px; color: var(--c-ivory); font-weight: 600; }
 .result__stand { display: flex; align-items: center; gap: 8px; margin-top: 18px; font-size: .8125rem; color: var(--c-text-2); }
 .result__stand.is-stale { color: var(--c-gold-hi); }
 .result__note { margin-top: 18px; padding-top: 18px; border-top: 1px solid var(--c-line); font-size: .8125rem; line-height: 1.6; color: var(--c-text-2); }

@@ -229,7 +229,7 @@ function initRechner(root, data) {
     out('spot-label').textContent = m.kursLabel;
     out('fine').textContent = `${num(feinGesamt, feinGesamt < 100 ? 2 : 1)} g`;
     out('spot').textContent = kurs ? eur.format(kurs) : '–';
-    out('value-label').textContent = multi ? 'Materialwert gesamt' : 'Materialwert';
+    out('value-label').textContent = multi ? 'Börsenwert gesamt' : 'Börsenwert';
     if (wert == null) { valueEl.textContent = '– €'; } else countTo(wert);
     renderList();
 
@@ -253,8 +253,8 @@ function initRechner(root, data) {
       out('live').textContent = wert == null
         ? `${num(feinGesamt)} Gramm ${m.feinLabel.replace('anteil', '')}.`
         : multi
-          ? `Materialwert gesamt ca. ${eur.format(wert)} für ${items.length} Stücke.`
-          : `Materialwert ca. ${eur.format(wert)} für ${fmtG(state.gramm)} Gramm ${state.legierung}er ${m.name}.`;
+          ? `Börsenwert gesamt ca. ${eur.format(wert)} für ${items.length} Stücke.`
+          : `Börsenwert ca. ${eur.format(wert)} für ${fmtG(state.gramm)} Gramm ${state.legierung}er ${m.name}.`;
     }, 800);
     waage();
   }
@@ -279,7 +279,7 @@ function initRates(root, data) {
       `<td class="num price">${kurs ? eur.format((kurs * v) / 1000) : '–'}</td></tr>`).join('');
   } else {
     target.innerHTML = liste.map((v) => `<div class="rate"><span class="rate__alloy">${v}<small>${label(v)}</small></span>` +
-      `<span class="rate__price num">${kurs ? eur.format((kurs * v) / 1000) : '–'}</span><span class="rate__unit">Materialwert je Gramm</span></div>`).join('');
+      `<span class="rate__price num">${kurs ? eur.format((kurs * v) / 1000) : '–'}</span><span class="rate__unit">Börsenwert je Gramm</span></div>`).join('');
   }
   const st = standText(data);
   root.querySelectorAll('[data-rates-stand]').forEach((el) => { el.textContent = st.text; el.classList.toggle('gold', st.stale); });
