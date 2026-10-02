@@ -18,12 +18,12 @@
 
 /* ── 2 Tokens ────────────────────────────────────────────────────────────── */
 :root {
-  --c-black: #0B0A09;
-  --c-anthracite: #171513;
-  --c-raised: #1F1C19;
-  --c-line: #2E2924;
+  --c-black: #16130F;
+  --c-anthracite: #211D19;
+  --c-raised: #2A2520;
+  --c-line: #3B342D;
   --c-ivory: #F4EEE4;
-  --c-text-2: #B8AD9E;
+  --c-text-2: #C6BBAC;
   --c-ink: #1A1714;
   --c-ink-2: #5A5047;
   --c-gold: #C9A45C;
@@ -224,10 +224,10 @@ ul[role="list"], ol[role="list"] { list-style: none; padding: 0; }
 /* Bilder: warmes Grading + Vignette */
 .media { position: relative; overflow: hidden; background: var(--c-anthracite); }
 .media picture { display: block; width: 100%; height: 100%; }
-.media img { width: 100%; height: 100%; object-fit: cover; filter: sepia(.18) saturate(1.08) contrast(1.04) brightness(.92); }
+.media img { width: 100%; height: 100%; object-fit: cover; filter: sepia(.18) saturate(1.08) contrast(1.04) brightness(.98); }
 .media::after {
   content: ""; position: absolute; inset: 0; pointer-events: none;
-  background: radial-gradient(120% 90% at 50% 45%, transparent 55%, rgba(11,10,9,.55) 100%);
+  background: radial-gradient(120% 90% at 50% 45%, transparent 55%, rgba(22,19,15,.55) 100%);
 }
 .media__credit { position: absolute; right: 8px; bottom: 6px; z-index: 2; font-size: 10px; color: rgba(244,238,228,.6); letter-spacing: .04em; }
 
@@ -297,7 +297,7 @@ dialog { color: inherit; }
   width: min(680px, 100% - 32px); max-height: calc(100dvh - 32px); padding: 0; border: 1px solid var(--c-line);
   border-radius: var(--radius); background: var(--c-anthracite); color: var(--c-ivory); overflow: auto;
 }
-.dialog::backdrop { background: rgba(11,10,9,.82); backdrop-filter: blur(6px); }
+.dialog::backdrop { background: rgba(22,19,15,.82); backdrop-filter: blur(6px); }
 .dialog[open] { animation: dlg-in .5s var(--ease); }
 @keyframes dlg-in { from { opacity: 0; transform: translateY(16px); } }
 .dialog__body { padding: clamp(24px, 4vw, 48px); }
@@ -340,7 +340,7 @@ dialog { color: inherit; }
 .wordmark { display: inline-flex; flex-direction: column; text-decoration: none; line-height: 1; }
 .wordmark__name { font: 300 1.75rem/1 var(--f-display); letter-spacing: .01em; }
 .wordmark__name em { font-style: italic; color: var(--c-gold); }
-.wordmark__sub { margin-top: 5px; font: 600 .5625rem/1 var(--f-ui); letter-spacing: .32em; text-transform: uppercase; color: var(--c-text-2); }
+.wordmark__sub { margin-top: 5px; font: 600 .5625rem/1 var(--f-ui); letter-spacing: .32em; white-space: nowrap; text-transform: uppercase; color: var(--c-text-2); }
 .nav { display: none; }
 .nav ul { display: flex; gap: clamp(16px, 2vw, 36px); list-style: none; margin: 0; padding: 0; }
 .nav a, .nav button.nav__trigger {
@@ -468,18 +468,27 @@ body.menu-open { overflow: hidden; }
 .hero__sub { max-width: 34em; font-size: var(--fs-lead); color: var(--c-text-2); line-height: 1.55; }
 .hero__sub strong { color: var(--c-ivory); font-weight: 400; }
 .hero__meta { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 24px; }
+@media (max-width: 360px) { .wordmark__sub { letter-spacing: .2em; } }
 @media (max-width: 959px) { .hero__content { gap: clamp(14px, 2.2vh, 24px); } }
 @media (max-width: 559px) {
-  /* Öffnungsstatus + Telefon fest untereinander → gleiche Höhe, egal welcher Status-Text (kein Layout-Shift) */
-  .hero__meta { flex-direction: column; align-items: flex-start; gap: 10px; }
-  /* Handy: Buttons nebeneinander → Ring rückt ins erste Bild */
-  .hero .btn-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-  .hero .btn-row .btn { min-height: 50px; padding: 12px 8px; font-size: .6875rem; letter-spacing: .08em; text-align: center; }
+  /* Handy: aufgeräumt in drei Gruppen – Botschaft · Text + Status · eine klare Handlung.
+     Wiederholungen (Ort, Leistungen, Telefon – steht in Menü und Anruf-Leiste) entfallen. */
+  .hero__opt { display: none; }
+  .hero__content { gap: 0; }
+  .hero__title { margin-top: 20px !important; }
+  .hero__sub { margin-top: 22px; max-width: 30em; font-size: 1.0625rem; line-height: 1.6; }
+  .hero__meta { order: 3; margin-top: 16px; }
+  .hero .btn-row { order: 4; display: grid; justify-items: center; gap: 4px; margin-top: 32px; }
+  .hero .btn-row .btn--solid { width: 100%; min-height: 54px; }
+  /* zweite Handlung als ruhiger Textlink statt zweitem Kasten */
+  .hero .btn-row .btn--ghost { min-height: 48px; padding: 12px 8px; border-color: transparent; color: var(--c-text-2); font-size: .75rem; }
+  .hero .btn-row .btn--ghost::before { display: none; }
+  .hero .btn-row .btn--ghost::after { content: "→"; color: var(--c-gold); }
 }
 .hero__tilt {
   position: absolute; z-index: 3; right: var(--gutter); bottom: 20px; pointer-events: auto;
   display: none; align-items: center; gap: 8px; padding: 8px 14px; border: 1px solid var(--c-line); border-radius: 99px;
-  background: rgba(11,10,9,.6); font-size: .75rem; letter-spacing: .06em;
+  background: rgba(22,19,15,.6); font-size: .75rem; letter-spacing: .06em;
 }
 .hero__tilt.is-available { display: inline-flex; }
 .hero__scroll {
@@ -646,18 +655,18 @@ body.menu-open { overflow: hidden; }
 /* Foto-Hintergrund: abgedunkelt + warmes Grading, Verlauf nach unten für lesbare Schrift */
 .buy { overflow: hidden; isolation: isolate; }
 .buy__bg { position: absolute; inset: 0; z-index: -2; }
-.buy__bg img { width: 100%; height: 100%; object-fit: cover; filter: sepia(.2) saturate(1.05) brightness(.62); transform: scale(1.03); transition: transform 1.4s var(--ease), filter .7s var(--ease); }
+.buy__bg img { width: 100%; height: 100%; object-fit: cover; filter: sepia(.2) saturate(1.05) brightness(.68); transform: scale(1.03); transition: transform 1.4s var(--ease), filter .7s var(--ease); }
 .buy:has(.buy__bg)::after {
   content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none;
-  background: linear-gradient(to top, rgba(11,10,9,.95) 0%, rgba(11,10,9,.78) 42%, rgba(11,10,9,.28) 100%);
+  background: linear-gradient(to top, rgba(22,19,15,.95) 0%, rgba(22,19,15,.78) 42%, rgba(22,19,15,.28) 100%);
 }
-.buy:hover .buy__bg img, .buy:focus-visible .buy__bg img { transform: scale(1.09); filter: sepia(.12) saturate(1.1) brightness(.78); }
+.buy:hover .buy__bg img, .buy:focus-visible .buy__bg img { transform: scale(1.09); filter: sepia(.12) saturate(1.1) brightness(.84); }
 .buy svg { filter: drop-shadow(0 1px 6px rgba(0,0,0,.6)); }
 /* Einzelne Fotos an den warmen Gesamtton angleichen */
-.buy__bg[data-pic="kachel-muenzen"] img { filter: sepia(.6) saturate(.7) brightness(.55); }
-.buy:hover .buy__bg[data-pic="kachel-muenzen"] img { filter: sepia(.45) saturate(.85) brightness(.7); }
-.buy__bg[data-pic="kachel-zahngold"] img { filter: sepia(.35) saturate(1.1) brightness(.42) contrast(1.15); }
-.buy:hover .buy__bg[data-pic="kachel-zahngold"] img { filter: sepia(.25) saturate(1.15) brightness(.56) contrast(1.15); }
+.buy__bg[data-pic="kachel-muenzen"] img { filter: sepia(.6) saturate(.7) brightness(.61); }
+.buy:hover .buy__bg[data-pic="kachel-muenzen"] img { filter: sepia(.45) saturate(.85) brightness(.76); }
+.buy__bg[data-pic="kachel-zahngold"] img { filter: sepia(.35) saturate(1.1) brightness(.48) contrast(1.15); }
+.buy:hover .buy__bg[data-pic="kachel-zahngold"] img { filter: sepia(.25) saturate(1.15) brightness(.62) contrast(1.15); }
 .buy svg { width: 44px; height: 44px; color: var(--c-gold); stroke-width: 1; transition: transform .6s var(--ease); }
 .buy:hover svg { transform: translateY(-4px) rotate(-4deg); }
 .buy h3 { font: 400 clamp(1.25rem, 1.05rem + .7vw, 1.625rem)/1.15 var(--f-display); }

@@ -65,7 +65,7 @@ for (const d of USE) {
           const cs = getComputedStyle(el); if (cs.display === 'none' || cs.visibility === 'hidden') continue;
           const b = el.getBoundingClientRect();
           if (b.width === 0 || b.height === 0) continue;
-          if (el.closest('.prose p, .prose li, .faq__a, .legal, .breadcrumb, .footer, address, .small, .map__consent p')) continue; // Fließtext-Links sind ok
+          if (el.closest('.prose p, .prose li, .faq__a, .legal, .breadcrumb, .footer, address, .small, .map__consent p, p.muted, label.check')) continue; // Fließtext-Links sind ok
           if (b.height < 32 || b.width < 32) out.tiny.push(`${label(el)} ${Math.round(b.width)}×${Math.round(b.height)}`);
         }
       }

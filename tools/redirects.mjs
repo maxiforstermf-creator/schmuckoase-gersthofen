@@ -49,7 +49,7 @@ const page = (to) => `<!doctype html>
 <meta name="robots" content="noindex, follow">
 <script>location.replace(${JSON.stringify(to)} + location.hash);</script>
 </head>
-<body style="background:#0B0A09;color:#F4EEE4;font-family:sans-serif">
+<body style="background:#16130F;color:#F4EEE4;font-family:sans-serif">
 <p>Diese Seite ist umgezogen: <a href="${to}" style="color:#C9A45C">weiter zur neuen Seite</a>.</p>
 </body>
 </html>
