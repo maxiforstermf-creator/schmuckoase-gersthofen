@@ -37,7 +37,12 @@ jobs:
           mkdir _site
           rsync -a --exclude-from=.deployignore ./ _site/
           echo "Veröffentlichte Dateien: $(find _site -type f | wc -l)"
-      - uses: actions/configure-pages@v5
+      - id: pages
+        uses: actions/configure-pages@v5
+      # Ohne eigene Domain läuft die Seite unter /<repo>/ → Pfade umstellen + noindex (Vorschau).
+      # Mit eigener Domain ist base_path leer → keine Änderung.
+      - name: Pfade für Vorschau anpassen
+        run: node tools/rebase.mjs _site "${{ steps.pages.outputs.base_path }}"
       - uses: actions/upload-pages-artifact@v3
         with:
           path: _site

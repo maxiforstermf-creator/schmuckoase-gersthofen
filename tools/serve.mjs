@@ -6,7 +6,7 @@ import { gzipSync } from 'node:zlib';
 import { join, extname, normalize } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-const ROOT = fileURLToPath(new URL('..', import.meta.url));
+const ROOT = process.env.ROOT || fileURLToPath(new URL('..', import.meta.url)); // ROOT=… → anderen Ordner ausliefern
 const PORT = Number(process.argv[2] || 8138);
 const NOCACHE = process.argv.includes('--no-cache'); // Vorschau aufs Handy: immer frische Dateien
 const HOST = process.argv[3] || '127.0.0.1'; // '0.0.0.0' = im WLAN erreichbar (z. B. fürs Handy)
