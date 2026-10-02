@@ -31,8 +31,8 @@ export function status(date = new Date()) {
     for (const [von] of zeiten(tag, isoPlus(now.iso, d))) {
       if (d === 0 && toMin(von) <= now.min) continue;
       if (d === 0) return { offen: false, text: `Heute ab ${uhr(von)} Uhr <em>geöffnet</em>` };
-      const wann = d === 1 ? 'morgen' : `am ${TAGE[tag]}`;
-      return { offen: false, text: `Wieder <em>geöffnet</em> ${wann} ab ${uhr(von)} Uhr` };
+      const wann = d === 1 ? 'Morgen' : TAGE[tag];
+      return { offen: false, text: `${wann} ab ${uhr(von)} Uhr <em>geöffnet</em>` }; // kurz halten: muss auf 320 px in eine Zeile passen
     }
   }
   return { offen: false, text: 'Derzeit <em>geschlossen</em>' };

@@ -24,5 +24,16 @@ export function init() {
     if (e.key === 'ArrowRight') { e.preventDefault(); show(idx + 1); }
   });
   dlg.addEventListener('click', (e) => { if (e.target === dlg) dlg.close(); });
+  // Wischen (Finger, Stift oder Maus ziehen): links = nächstes, rechts = vorheriges Bild
+  let x0 = null, y0 = 0;
+  img.addEventListener('pointerdown', (e) => { x0 = e.clientX; y0 = e.clientY; });
+  img.addEventListener('pointerup', (e) => {
+    if (x0 === null) return;
+    const dx = e.clientX - x0, dy = e.clientY - y0;
+    if (Math.abs(dx) > 45 && Math.abs(dx) > Math.abs(dy) * 1.3) show(idx + (dx < 0 ? 1 : -1));
+    x0 = null;
+  });
+  img.addEventListener('pointercancel', () => { x0 = null; });
+  img.draggable = false;
   dlg.addEventListener('close', () => opener?.focus());
 }

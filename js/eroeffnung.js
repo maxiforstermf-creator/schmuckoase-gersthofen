@@ -19,7 +19,7 @@ export function init() {
     const tick = () => {
       const ms = start - Date.now();
       if (ms <= 0) { grid.hidden = true; live.hidden = false; ph.hidden = true; return false; }
-      grid.hidden = false;
+      grid.hidden = false; live.hidden = true; ph.hidden = false; // Termin in der Zukunft: Countdown zeigen
       const s = Math.floor(ms / 1000);
       out.d.textContent = pad(Math.floor(s / 86400));
       out.h.textContent = pad(Math.floor((s % 86400) / 3600));
@@ -37,6 +37,7 @@ export function init() {
       btn.title = 'Termin folgt in Kürze.';
       continue;
     }
+    btn.hidden = false; // Termin in der Zukunft: Kalender-Button zeigen
     btn.addEventListener('click', () => {
       const end = new Date(start.getTime() + EROEFFNUNG_DAUER_STUNDEN * 36e5);
       const ort = `SchmuckOase Gersthofen, ${ADRESSE.strasse}, ${ADRESSE.zusatz}, ${ADRESSE.plz} ${ADRESSE.ort}`;

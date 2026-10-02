@@ -9,7 +9,8 @@
     "goldpreis": "node tools/goldpreis.mjs",
     "vendor": "node tools/build-vendor.mjs",
     "poster": "node tools/render-poster.mjs",
-    "check": "node tools/check.mjs"
+    "check": "node tools/check.mjs",
+    "audit": "node tools/audit.mjs"
   },
   "devDependencies": {
     "esbuild": "^0.28.2",
