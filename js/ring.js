@@ -84,7 +84,7 @@ export function init(canvas, opts = {}) {
 async function build(canvas, opts) {
   const T = await import('./vendor/three.module.min.js');
   const still = !!opts.still;
-  const lite = coarse && !still; // Handy: leichtere Variante (optisch kaum Unterschied)
+  const lite = coarse && !still; // Handy: kleinere Textur/weniger Segmente (Material identisch zum Standbild)
   await pause();
 
   const renderer = new T.WebGLRenderer({ canvas, antialias: true, alpha: true, preserveDrawingBuffer: still, powerPreference: 'high-performance' });
@@ -145,8 +145,8 @@ async function build(canvas, opts) {
   const engr = await gravur(T, renderer, { umfang: 2 * Math.PI * (R + 2 * halfW), perimeter, lite });
   const mat = new T.MeshPhysicalMaterial({
     color: 0xe6c17a, metalness: 1, roughness: 1, roughnessMap: engr.rough,
-    map: engr.color, bumpMap: engr.color, bumpScale: lite ? 2.5 : 3.5,
-    clearcoat: lite ? 0 : 0.25, clearcoatRoughness: 0.08, envMapIntensity: 1.15,
+    map: engr.color, bumpMap: engr.color, bumpScale: 3.5,       // identisch zum Standbild →
+    clearcoat: 0.25, clearcoatRoughness: 0.08, envMapIntensity: 1.15, // Wechsel unsichtbar
   });
   const ring = new T.Mesh(geo, mat);
 
@@ -201,11 +201,14 @@ async function build(canvas, opts) {
   const turntable = new T.Group();
   turntable.add(tilt);
   scene.add(turntable);
+  canvas.__ring = { turntable, tilt }; // nur für automatische Tests (Pose prüfen)
 
+  // Zeichenfläche ist immer quadratisch (wie das Standbild). Nur die Breite lesen: Safari liefert
+  // vor dem ersten setSize die Höhe aus dem Standard-Seitenverhältnis 2:1 → Ring wäre anders skaliert.
   const resize = () => {
-    const w = canvas.clientWidth || 600, h = canvas.clientHeight || 600;
-    renderer.setSize(w, h, false);
-    camera.aspect = w / h;
+    const w = canvas.clientWidth || 600;
+    renderer.setSize(w, w, false);
+    camera.aspect = 1;
     camera.updateProjectionMatrix();
   };
   resize();
@@ -258,32 +261,53 @@ async function build(canvas, opts) {
   let spin = 0;           // Grunddrehung läuft weich an
   const uT0 = page ? 5.1 : 2.4; // gleicher Funkel-Zustand wie im Standbild
 
+  /* Übergang Standbild → 3D in drei Phasen, damit nie zwei Ringe gleichzeitig zu sehen sind:
+     1. 3D-Ring blendet REGUNGSLOS in exakt der Pose des Standbilds ein (CSS-Transition auf .is-ready)
+     2. erst wenn er voll deckend ist: Standbild ausblenden (.is-live, sofort)
+     3. erst danach beginnt die Bewegung (weich anlaufend) */
+  const FADE_MS = 900;
+  let moving = false;
+
   /* Nur rendern, wenn sichtbar und Tab aktiv */
   let visible = true, running = false, last = performance.now(), t = 0;
-  const loop = (now) => {
-    if (!visible || document.hidden) { running = false; return; }
-    const dt = Math.min((now - last) / 1000, 0.05); last = now; t += dt;
-    cur.x += (target.x - cur.x) * 0.05;
-    cur.y += (target.y - cur.y) * 0.05;
-    scrollCur += (scrollY - scrollCur) * 0.085;
+  // Pose aus Zustand berechnen – wird auch VOR dem ersten Bild aufgerufen (= Pose des Standbilds)
+  const pose = () => {
     const sp = Math.min(scrollCur / innerHeight, 1.5); // Scroll-Fortschritt in Bildschirmhöhen
-    const k = Math.min(t / 1.6, 1);
-    spin += dt * autoSpin * k * k * (3 - 2 * k);
     turntable.rotation.y = baseAngle + spin + cur.y + scrollCur * spinPerPx;
     turntable.rotation.x = cur.x + sp * (page ? 0.35 : 0.28);
     tilt.rotation.z = 0.32 + Math.sin(t * 0.4) * 0.05 - sp * 0.18;
     gMat.uniforms.uTime.value = uT0 + t * 2.2;
+  };
+  const loop = (now) => {
+    if (!visible || document.hidden) { running = false; return; }
+    const dt = Math.min((now - last) / 1000, 0.05); last = now;
+    if (moving) {
+      t += dt;
+      const k = Math.min(t / 1.6, 1), ease = k * k * (3 - 2 * k); // 0 → 1 über 1,6 s
+      cur.x += (target.x * ease - cur.x) * 0.05;
+      cur.y += (target.y * ease - cur.y) * 0.05;
+      scrollCur += (scrollY * ease - scrollCur) * 0.085;
+      spin += dt * autoSpin * ease;
+    }
+    pose();
     renderer.render(scene, camera);
     requestAnimationFrame(loop);
   };
   const start = () => { if (!running && visible && !document.hidden) { running = true; last = performance.now(); requestAnimationFrame(loop); } };
   new IntersectionObserver(([e]) => { visible = e.isIntersecting; start(); }).observe(canvas);
   document.addEventListener('visibilitychange', start);
-  canvas.addEventListener('webglcontextlost', () => { canvas.classList.remove('is-ready'); canvas.parentElement?.classList.remove('is-live'); });
+  canvas.addEventListener('webglcontextlost', () => { canvas.classList.remove('is-ready'); canvas.parentElement?.classList.remove('is-live'); moving = false; });
 
+  // Phase 1: erstes Bild (= Pose des Standbilds) rendern und einblenden
+  pose();
   renderer.render(scene, camera);
+  await new Promise((r) => requestAnimationFrame(r)); // sicherstellen, dass das Bild gezeichnet ist
   canvas.classList.add('is-ready');
+  start();
+  // Phase 2 + 3: nach vollständigem Einblenden Standbild weg, dann Bewegung starten
+  await new Promise((r) => setTimeout(r, reduced ? 0 : FADE_MS + 60));
   canvas.parentElement?.classList.add('is-live');
+  moving = true;
   addEventListener('scroll', start, { passive: true });
   start();
 }

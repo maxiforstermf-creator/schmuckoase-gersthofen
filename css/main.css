@@ -442,13 +442,13 @@ body.menu-open { overflow: hidden; }
 .hero__poster img { width: 100%; height: 100%; object-fit: contain; }
 /* Bis der 3D-Ring übernimmt: Standbild schwebt sanft */
 /* Schweben liegt auf der ganzen Bühne → läuft beim Wechsel Standbild → 3D nahtlos weiter */
-.hero__stage { animation: ring-float 6s ease-in-out infinite; }
+.hero__stage { animation: ring-float 6s ease-in-out infinite; will-change: transform; } /* eigene Ebene → läuft im Compositor weiter, auch wenn JS kurz rechnet */
 @keyframes ring-float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-12px); } }
 /* 3D blendet ÜBER dem identischen Standbild ein; das Standbild verschwindet erst danach (kein Helligkeitsloch) */
-.hero__canvas { z-index: 1; opacity: 0; transition: opacity .9s var(--ease); pointer-events: auto; touch-action: pan-y; }
+.hero__canvas { max-width: none; z-index: 1; opacity: 0; transition: opacity .9s linear; pointer-events: auto; touch-action: pan-y; }
 .hero__canvas.is-ready { opacity: 1; }
 .hero__poster { z-index: 0; }
-.hero__canvas.is-ready + .hero__poster, .hero__stage.is-live .hero__poster { opacity: 0; transition: opacity 0s 1s; }
+.hero__stage.is-live .hero__poster { visibility: hidden; } /* erst wenn das 3D voll deckend ist (JS) */
 .hero__content { position: relative; z-index: 2; display: grid; gap: clamp(20px, 3vh, 32px); }
 .hero__title { max-width: 11ch; }
 .hero__title .w { display: inline-block; }
@@ -774,9 +774,9 @@ body.menu-open { overflow: hidden; }
 .page-hero h1 { max-width: 16ch; }
 .page-hero .lead { margin-top: 4px; }
 .page-hero__ring img { width: 100%; }
-.page-hero__canvas { z-index: 1; aspect-ratio: 1; height: auto; transition: opacity .9s var(--ease); }
+.page-hero__canvas { max-width: none; z-index: 1; aspect-ratio: 1; height: auto; transition: opacity .9s linear; }
 .page-hero__canvas:not(.is-ready) { opacity: 0 !important; }
-.page-hero__canvas.is-ready + picture.page-hero__ring { opacity: 0; transition: opacity 0s 1s; }
+.page-hero.is-live picture.page-hero__ring { visibility: hidden; } /* erst wenn das 3D voll deckend ist (JS) */
 .page-hero__ring { position: absolute; right: -8vw; top: 50%; width: min(52vw, 560px); transform: translateY(-50%); opacity: .5; pointer-events: none; }
 @media (min-width: 900px) {
   .page-hero__ring { right: max(-6vw, calc((100vw - 1320px) / 2 - 120px)); opacity: .75; }
