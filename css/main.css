@@ -676,6 +676,10 @@ body.menu-open { overflow: hidden; }
 .story.is-pinned .story__fig { aspect-ratio: auto; height: min(72vh, 760px); order: 2; will-change: clip-path; }
 .story.is-pinned .story__fig img { transform: none; will-change: transform; }
 .story.is-pinned .story__text { order: 1; }
+/* Szenen liegen übereinander: Flächen klick-durchlässig, nur sichtbarer Text/Bild reagiert
+   (sonst fängt die oberste Szene 04 alle Klicks ab) */
+.story.is-pinned .story__item { pointer-events: none; }
+.story.is-pinned .story__text, .story.is-pinned .story__fig { pointer-events: auto; }
 .story.is-pinned .story__progress {
   display: block; position: absolute; left: var(--gutter); right: var(--gutter); bottom: 32px; height: 1px; background: var(--c-line);
 }
