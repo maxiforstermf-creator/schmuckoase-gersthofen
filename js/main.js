@@ -23,6 +23,15 @@ function initLinks() {
   for (const el of $$('[data-year]')) el.textContent = new Date().getFullYear();
 }
 
+/* ── Intro-Vorhang nach dem Abspielen entfernen ──────────────────────────── */
+function initIntro() {
+  const intro = $('.intro');
+  if (!intro) return;
+  if (document.documentElement.classList.contains('no-intro') || reducedMotion) { intro.remove(); return; }
+  intro.addEventListener('animationend', (e) => { if (e.animationName === 'intro-curtain') intro.remove(); });
+  setTimeout(() => intro.remove(), 2600); // Sicherheitsnetz
+}
+
 /* ── Header: kompakt beim Scrollen, Menü, Untermenü ──────────────────────── */
 function initHeader() {
   const header = $('#header');
@@ -34,7 +43,13 @@ function initHeader() {
 
   const burger = $('.burger', header);
   const menu = $('#mobile-menu');
+  // Geschlossenes Menü ganz aus dem Render-Baum nehmen (hidden → display:none):
+  // Safari 26 färbt Status-/Adressleiste nur, wenn GENAU EIN festes Element am Rand liegt.
+  let closeTimer = 0;
   const setMenu = (open) => {
+    clearTimeout(closeTimer);
+    if (open) { menu.hidden = false; void menu.offsetHeight; } // erst einblenden, dann Animation starten
+    else closeTimer = setTimeout(() => { if (!menu.classList.contains('is-open')) menu.hidden = true; }, reducedMotion ? 0 : 750);
     burger.setAttribute('aria-expanded', open);
     burger.setAttribute('aria-label', open ? 'Menü schließen' : 'Menü öffnen');
     menu.classList.toggle('is-open', open);
@@ -45,6 +60,7 @@ function initHeader() {
   };
   if (burger && menu) {
     menu.inert = true;
+    menu.hidden = true;
     burger.addEventListener('click', () => setMenu(burger.getAttribute('aria-expanded') !== 'true'));
     menu.addEventListener('click', (e) => { if (e.target.closest('a')) setMenu(false); });
     addEventListener('keydown', (e) => { if (e.key === 'Escape' && menu.classList.contains('is-open')) { setMenu(false); burger.focus(); } });
@@ -203,6 +219,7 @@ function initModules() {
 }
 
 initLinks();
+initIntro();
 initHeader();
 initReveal();
 initStickyBar();

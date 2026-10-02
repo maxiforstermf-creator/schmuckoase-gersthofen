@@ -326,6 +326,8 @@ dialog { color: inherit; }
   background: var(--c-black); border-color: rgba(201,164,92,.14); /* voll deckend: Safari färbt die Statusleiste mit, nichts scheint durch */
 }
 .header.is-hidden { transform: translateY(-100%); }
+/* Handy: Header immer voll deckend → einziger Kandidat am oberen Rand, Safari färbt die Statusleiste schwarz */
+@media (max-width: 899px) { .header { background: var(--c-black); border-bottom-color: rgba(201,164,92,.14); } }
 .header__inner { height: 100%; display: flex; align-items: center; justify-content: space-between; gap: 24px; }
 .wordmark { display: inline-flex; flex-direction: column; text-decoration: none; line-height: 1; }
 .wordmark__name { font: 300 1.75rem/1 var(--f-display); letter-spacing: .01em; }
