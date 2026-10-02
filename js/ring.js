@@ -45,22 +45,30 @@ function whenEngaged(cb) {
 const FLIP_X = 1, FLIP_Y = 1; // Leserichtung der Gravur auf der Außenseite
 async function gravur(T, renderer, { umfang, perimeter, lite }) {
   try {
-    const face = new FontFace('Cormorant Garamond Gravur', 'url(/assets/fonts/cormorant-garamond-latin-500-italic.woff2)', { style: 'italic', weight: '500' });
+    // Kalligrafische Gravur-Schreibschrift (Monsieur La Doulaise, OFL – lokal eingebunden)
+    const face = new FontFace('SchmuckOase Gravur', 'url(/assets/fonts/monsieur-la-doulaise-latin-400-normal.woff2)');
     document.fonts.add(await face.load());
   } catch {}
   const W = lite ? 2048 : 4096, H = lite ? 512 : 1024; // Handy: kleinere Textur
   const pxU = W / umfang, pxV = H / perimeter;   // Pixel je Szenen-Einheit entlang Umfang bzw. Profil
   const sx = pxU / pxV;                          // Verzerrung u/v ausgleichen
-  const fontPx = Math.round(0.21 * pxV);         // Schrifthöhe ≈ 0,21 Einheiten (Ringbreite 0,52)
+  // Schreibschrift: kleine Mittellänge, große Schwünge → größer setzen, Breite begrenzen (2× umlaufend)
+  const FONT = (px) => `400 ${px}px "SchmuckOase Gravur", "Cormorant Garamond", Georgia, serif`;
+  let fontPx = Math.round(0.36 * pxV);
+  { const m = document.createElement('canvas').getContext('2d'); m.font = FONT(fontPx);
+    const maxW = (W * 0.44) / sx; const w = m.measureText('SchmuckOase').width;
+    if (w > maxW) fontPx = Math.floor(fontPx * maxW / w); }
   const make = (bg, ink) => {
     const c = document.createElement('canvas'); c.width = W; c.height = H;
     const g = c.getContext('2d');
     g.fillStyle = bg; g.fillRect(0, 0, W, H);
     g.fillStyle = ink; g.textAlign = 'center'; g.textBaseline = 'middle';
-    g.font = `italic 500 ${fontPx}px "Cormorant Garamond Gravur", Georgia, serif`;
+    g.font = FONT(fontPx);
     for (const x of [W * 0.25, W * 0.75]) {         // zweimal umlaufend
       g.save(); g.translate(x, H / 2); g.scale(FLIP_X * sx, FLIP_Y);
-      g.fillText('SchmuckOase', 0, 4);
+      g.fillText('SchmuckOase', 0, fontPx * 0.06);
+      g.lineWidth = fontPx * 0.018; g.strokeStyle = ink; g.lineJoin = 'round'; // feine Haarstriche etwas kräftiger → auch klein lesbar
+      g.strokeText('SchmuckOase', 0, fontPx * 0.06);
       g.restore();
     }
     const t = new T.CanvasTexture(c);
