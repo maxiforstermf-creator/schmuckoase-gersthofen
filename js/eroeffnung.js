@@ -31,9 +31,10 @@ export function init() {
   }
 
   for (const btn of document.querySelectorAll('[data-ics]')) {
-    if (!valid || start < Date.now()) {
+    if (valid && start < Date.now()) { btn.hidden = true; continue; } // Eröffnung vorbei → Button ausblenden
+    if (!valid) {
       btn.setAttribute('aria-disabled', 'true');
-      btn.title = valid ? 'Die Eröffnung hat bereits stattgefunden.' : 'Termin folgt in Kürze.';
+      btn.title = 'Termin folgt in Kürze.';
       continue;
     }
     btn.addEventListener('click', () => {

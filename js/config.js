@@ -16,7 +16,7 @@ export const WHATSAPP_NUMMER = ''; // TODO: [PLATZHALTER: WhatsApp-Nummer]
 
 /** Eröffnung: ISO-Datum mit Zeitzone, z. B. '2026-11-07T10:00:00+01:00'.
  *  null → Countdown zeigt einen Platzhalter, .ics-Button ist deaktiviert. */
-export const EROEFFNUNG = null; // TODO: [PLATZHALTER: Eröffnungsdatum + Uhrzeit]
+export const EROEFFNUNG = '2026-10-01T09:00:00+02:00'; // Eröffnung 1. Oktober 2026 (Uhrzeit 9:00 angenommen)
 export const EROEFFNUNG_DAUER_STUNDEN = 8;
 
 /** Adresse des neuen Ladens. */
