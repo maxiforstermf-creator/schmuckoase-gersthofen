@@ -7,7 +7,7 @@ const fmt = new Intl.DateTimeFormat('en-GB', {
 });
 const WD = { Mon: 1, Tue: 2, Wed: 3, Thu: 4, Fri: 5, Sat: 6, Sun: 7 };
 const toMin = (hhmm) => { const [h, m] = hhmm.split(':').map(Number); return h * 60 + m; };
-const uhr = (hhmm) => hhmm.replace(/^0/, '');
+const uhr = (hhmm) => hhmm.replace(/^0/, '').replace(/:00$/, ''); // „18:00“ → „18“
 
 function berlinNow(date = new Date()) {
   const p = Object.fromEntries(fmt.formatToParts(date).map((x) => [x.type, x.value]));
@@ -24,25 +24,26 @@ export function status(date = new Date()) {
   const now = berlinNow(date);
   const zeiten = (tag, iso) => (GESCHLOSSEN_AN.includes(iso) ? [] : OEFFNUNGSZEITEN[tag] || []);
   for (const [von, bis] of zeiten(now.tag, now.iso)) {
-    if (now.min >= toMin(von) && now.min < toMin(bis)) return { offen: true, text: `Jetzt geöffnet · bis ${uhr(bis)} Uhr` };
+    if (now.min >= toMin(von) && now.min < toMin(bis)) return { offen: true, text: `Heute <em>geöffnet</em> bis ${uhr(bis)} Uhr` };
   }
   for (let d = 0; d < 8; d++) {
     const tag = ((now.tag - 1 + d) % 7) + 1;
     for (const [von] of zeiten(tag, isoPlus(now.iso, d))) {
       if (d === 0 && toMin(von) <= now.min) continue;
-      const wann = d === 0 ? 'heute' : d === 1 ? 'morgen' : TAGE[tag];
-      return { offen: false, text: `Geschlossen · öffnet ${wann} um ${uhr(von)} Uhr` };
+      if (d === 0) return { offen: false, text: `Heute ab ${uhr(von)} Uhr <em>geöffnet</em>` };
+      const wann = d === 1 ? 'morgen' : `am ${TAGE[tag]}`;
+      return { offen: false, text: `Wieder <em>geöffnet</em> ${wann} ab ${uhr(von)} Uhr` };
     }
   }
-  return { offen: false, text: 'Derzeit geschlossen' };
+  return { offen: false, text: 'Derzeit <em>geschlossen</em>' };
 }
 
 export function init() {
   const update = () => {
     const s = status();
     for (const b of document.querySelectorAll('[data-open-badge]')) {
-      b.classList.toggle('badge--open', s.offen);
-      b.querySelector('[data-open-text]').textContent = s.text;
+      b.classList.toggle('is-open', s.offen);
+      b.querySelector('[data-open-text]').innerHTML = s.text; // Text stammt nur aus status() (kein Nutzerinhalt)
     }
     const heute = berlinNow().tag;
     document.querySelectorAll('[data-hours] tr[data-day]').forEach((tr) => tr.classList.toggle('is-today', Number(tr.dataset.day) === heute));
