@@ -428,16 +428,19 @@ body.menu-open { overflow: hidden; }
 
 /* ── 9 Hero ──────────────────────────────────────────────────────────────── */
 .hero {
-  position: relative; min-height: 100svh; display: grid; align-items: end; overflow: hidden;
-  padding: calc(var(--header-h) + min(60vw, 400px)) 0 clamp(40px, 7vh, 88px);
+  /* Handy/Tablet: erst die Botschaft, DARUNTER der Ring – er schaut unten ins Bild und
+     dreht sich beim Scrollen genau dann, wenn man ihn sieht */
+  position: relative; display: flex; flex-direction: column; overflow: hidden;
+  padding: calc(var(--header-h) + clamp(16px, 3.5vh, 40px)) 0 0;
   background:
-    radial-gradient(60% 55% at 72% 42%, rgba(201,164,92,.13), transparent 70%),
-    radial-gradient(40% 40% at 10% 100%, rgba(142,107,47,.10), transparent 70%),
+    radial-gradient(70% 38% at 50% 82%, rgba(201,164,92,.16), transparent 70%),
+    radial-gradient(40% 40% at 10% 30%, rgba(142,107,47,.08), transparent 70%),
     var(--c-black);
 }
-.hero__stage { position: absolute; inset: 0; pointer-events: none; }
+.hero__content { order: 1; }
+.hero__stage { position: relative; order: 2; width: 100%; max-width: 560px; aspect-ratio: 1; margin: max(-16%, -90px) auto -8%; pointer-events: none; } /* Bild hat transparenten Rand → näher an den Text */
 .hero__poster, .hero__canvas {
-  position: absolute; left: 50%; top: calc(var(--header-h) + min(32vw, 210px)); width: min(104vw, 680px); aspect-ratio: 1; transform: translate(-50%, -50%);
+  position: absolute; left: 50%; top: 50%; width: 118%; aspect-ratio: 1; transform: translate(-50%, -50%);
 }
 .hero__poster img { width: 100%; height: 100%; object-fit: contain; }
 /* Bis der 3D-Ring übernimmt: Standbild schwebt sanft */
@@ -455,8 +458,14 @@ body.menu-open { overflow: hidden; }
 .hero__sub { max-width: 34em; font-size: var(--fs-lead); color: var(--c-text-2); line-height: 1.55; }
 .hero__sub strong { color: var(--c-ivory); font-weight: 400; }
 .hero__meta { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 24px; }
+@media (max-width: 959px) { .hero__content { gap: clamp(14px, 2.2vh, 24px); } }
+@media (max-width: 559px) {
+  /* Handy: Buttons nebeneinander → Ring rückt ins erste Bild */
+  .hero .btn-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .hero .btn-row .btn { min-height: 50px; padding: 12px 8px; font-size: .6875rem; letter-spacing: .08em; text-align: center; }
+}
 .hero__tilt {
-  position: absolute; z-index: 3; right: var(--gutter); top: calc(var(--header-h) + 16px); pointer-events: auto;
+  position: absolute; z-index: 3; right: var(--gutter); bottom: 20px; pointer-events: auto;
   display: none; align-items: center; gap: 8px; padding: 8px 14px; border: 1px solid var(--c-line); border-radius: 99px;
   background: rgba(11,10,9,.6); font-size: .75rem; letter-spacing: .06em;
 }
@@ -468,8 +477,11 @@ body.menu-open { overflow: hidden; }
 .hero__scroll::after { content: ""; display: block; width: 1px; height: 64px; margin: 16px auto 0; background: linear-gradient(var(--c-gold), transparent); animation: scrollcue 2.4s var(--ease) infinite; transform-origin: top; }
 @keyframes scrollcue { 0% { transform: scaleY(0); } 50% { transform: scaleY(1); transform-origin: top; } 51% { transform-origin: bottom; } 100% { transform: scaleY(0); transform-origin: bottom; } }
 @media (min-width: 960px) {
-  .hero { align-items: center; padding-top: calc(var(--header-h) + 24px); padding-bottom: var(--s-6); }
+  /* Desktop: Text links, Ring rechts daneben (Bühne liegt absolut hinter dem Inhalt) */
+  .hero { display: grid; min-height: 100svh; align-items: center; padding: calc(var(--header-h) + 24px) 0 var(--s-6); }
+  .hero__stage { position: absolute; inset: 0; width: auto; max-width: none; aspect-ratio: auto; margin: 0; }
   .hero__poster, .hero__canvas { left: auto; right: -6vw; top: 52%; width: min(60vw, 880px); transform: translateY(-50%); }
+  .hero__tilt { top: calc(var(--header-h) + 16px); bottom: auto; }
   .hero__content { padding-right: 34vw; }
   .hero__scroll { display: block; }
 }
