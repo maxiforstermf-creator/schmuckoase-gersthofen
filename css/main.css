@@ -850,10 +850,10 @@ body.menu-open { overflow: hidden; }
 /* ── 15 Motion (Reveal per IntersectionObserver; nur mit JS) ─────────────── */
 .js [data-reveal] { opacity: 0; transform: translateY(28px); transition: opacity 1.1s var(--ease), transform 1.1s var(--ease); transition-delay: calc(var(--d, 0) * 1ms); }
 .js [data-reveal].is-in { opacity: 1; transform: none; }
-.js [data-reveal="mask"] { opacity: 1; transform: none; clip-path: inset(100% 0 0 0); transition: clip-path 1.4s var(--ease-in-out); }
-.js [data-reveal="mask"].is-in { clip-path: inset(0); }
-.js [data-reveal="mask"] img { transform: scale(1.18); transition: transform 1.8s var(--ease); }
-.js [data-reveal="mask"].is-in img { transform: scale(1); }
+/* Bilder: überall derselbe kurze Auftritt – weich einblenden, sobald geladen und im Blick (JS: initImages) */
+.js [data-reveal="mask"] { opacity: 1; transform: none; }
+.js picture[data-fade] { opacity: 0; transition: opacity .6s var(--ease); }
+.js picture[data-fade].is-shown { opacity: 1; }
 .js .rule[data-reveal] { opacity: .55; transform: scaleX(0); transition: transform 1.6s var(--ease-in-out); }
 .js .rule[data-reveal].is-in { transform: scaleX(1); }
 
@@ -898,7 +898,7 @@ body.menu-open { overflow: hidden; }
   *, *::before, *::after { animation-duration: .001ms !important; animation-delay: 0s !important; animation-iteration-count: 1 !important; transition-duration: .001ms !important; transition-delay: 0s !important; scroll-behavior: auto !important; }
   .intro { display: none; }
   .hero__title .w, .hero [data-hero-in], .page-hero .container > * { opacity: 1; transform: none; filter: none; animation: none; }
-  .js [data-reveal], .js [data-reveal="mask"], .js [data-reveal="mask"] img, .js .rule[data-reveal] { opacity: 1; transform: none; clip-path: none; }
+  .js [data-reveal], .js [data-reveal="mask"], .js picture[data-fade], .js .rule[data-reveal] { opacity: 1; transform: none; clip-path: none; }
   .marquee__track { animation: none; flex-wrap: wrap; width: auto; justify-content: center; padding-inline: var(--gutter); }
   .marquee__item { white-space: normal; text-align: center; line-height: 1.4; padding-right: 0; }
   .marquee__item[aria-hidden="true"] { display: none; }

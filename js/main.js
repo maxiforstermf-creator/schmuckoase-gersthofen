@@ -114,6 +114,35 @@ function initReveal() {
   }
 }
 
+/* ── Bilder: einheitlich kurz einblenden ─────────────────────────────────────
+   Jedes Bild (außer Hero/Lightbox) blendet in .6 s ein – erst wenn es geladen
+   UND im Blick ist, damit nie ein halb geladenes Bild „hochgezogen“ wird. */
+function initImages() {
+  const pics = $$('picture').filter((p) => !p.closest('.hero__stage, .page-hero, dialog'));
+  const show = (p) => p.classList.add('is-shown');
+  const ready = (img) => img.complete && img.naturalWidth > 0;
+  if (reducedMotion || !('IntersectionObserver' in window)) return;
+  const io = new IntersectionObserver((entries) => {
+    for (const e of entries) {
+      if (!e.isIntersecting) continue;
+      io.unobserve(e.target);
+      const img = e.target.querySelector('img');
+      if (!img || ready(img)) show(e.target);
+      else {
+        img.addEventListener('load', () => (img.decode ? img.decode().catch(() => {}) : Promise.resolve()).then(() => show(e.target)), { once: true });
+        img.addEventListener('error', () => show(e.target), { once: true });
+      }
+    }
+  }, { rootMargin: '0px 0px -4% 0px' });
+  for (const p of pics) {
+    const img = p.querySelector('img');
+    // schon sichtbar und geladen (z. B. beim Neuladen mitten auf der Seite): ohne Effekt
+    if (img && ready(img) && p.getBoundingClientRect().top < innerHeight) continue;
+    p.dataset.fade = '';
+    io.observe(p);
+  }
+}
+
 /* ── Mobile Sticky-Bar: erscheint nach dem Hero ──────────────────────────── */
 function initStickyBar() {
   const bar = $('.sticky-bar');
@@ -225,6 +254,7 @@ initLinks();
 initIntro();
 initHeader();
 initReveal();
+initImages();
 initStickyBar();
 initMagnetic();
 initReviews();
