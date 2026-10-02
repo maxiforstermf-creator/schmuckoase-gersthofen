@@ -165,11 +165,15 @@ function initModules() {
   if (hours) import('./oeffnungszeiten.js').then((m) => m.init());
   if ($('[data-countdown]') || $('[data-ics]')) whenNear($('[data-countdown]') || $('[data-ics]'), () => import('./eroeffnung.js').then((m) => m.init()));
   if ($('[data-contact-form]')) import('./kontakt.js').then((m) => m.init());
+  if (!reducedMotion) idle(() => import('./effects.js').then((m) => m.init()), 1200);
 
-  // 3D-Ring: erst nach dem Laden + Leerlauf, damit LCP/TBT nicht leiden
-  const canvas = $('.hero__canvas');
+  // 3D-Ring (Hero bzw. Seitenkopf der Unterseiten): erst nach dem Laden + Leerlauf, damit LCP/TBT nicht leiden
+  const canvas = $('.hero__canvas') || $('.page-hero__canvas');
   if (canvas) {
-    const start = () => idle(() => import('./ring.js').then((m) => m.init(canvas)).catch(() => {}), 1500);
+    const opts = canvas.classList.contains('page-hero__canvas')
+      ? { mode: 'page', tiltX: Number(canvas.dataset.tilt ?? 0.78), angle: Number(canvas.dataset.angle ?? 2.2) }
+      : {};
+    const start = () => idle(() => import('./ring.js').then((m) => m.init(canvas, opts)).catch(() => {}), 1500);
     document.readyState === 'complete' ? start() : addEventListener('load', start, { once: true });
   }
 

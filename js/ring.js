@@ -191,6 +191,13 @@ async function build(canvas, opts) {
     });
   }
 
+  /* Scroll-Kopplung: beim Scrollen dreht und neigt sich der Ring (geglättet) */
+  const page = opts.mode === 'page';
+  const baseAngle = opts.angle ?? 0;
+  const autoSpin = page ? 0.08 : 0.32;     // Grunddrehung pro Sekunde
+  const spinPerPx = page ? 0.0075 : 0.0045; // zusätzliche Drehung je gescrolltem Pixel
+  let scrollCur = scrollY;
+
   /* Nur rendern, wenn sichtbar und Tab aktiv */
   let visible = true, running = false, last = performance.now(), t = 0;
   const loop = (now) => {
@@ -198,9 +205,11 @@ async function build(canvas, opts) {
     const dt = Math.min((now - last) / 1000, 0.05); last = now; t += dt;
     cur.x += (target.x - cur.x) * 0.05;
     cur.y += (target.y - cur.y) * 0.05;
-    turntable.rotation.y = t * 0.32 + cur.y;
-    turntable.rotation.x = cur.x;
-    tilt.rotation.z = 0.32 + Math.sin(t * 0.4) * 0.05;
+    scrollCur += (scrollY - scrollCur) * 0.085;
+    const sp = Math.min(scrollCur / innerHeight, 1.5); // Scroll-Fortschritt in Bildschirmhöhen
+    turntable.rotation.y = baseAngle + t * autoSpin + cur.y + scrollCur * spinPerPx;
+    turntable.rotation.x = cur.x + sp * (page ? 0.35 : 0.28);
+    tilt.rotation.z = 0.32 + Math.sin(t * 0.4) * 0.05 - sp * 0.18;
     gMat.uniforms.uTime.value = t * 2.2;
     renderer.render(scene, camera);
     requestAnimationFrame(loop);
@@ -213,5 +222,6 @@ async function build(canvas, opts) {
   renderer.render(scene, camera);
   canvas.classList.add('is-ready');
   canvas.parentElement?.classList.add('is-live');
+  addEventListener('scroll', start, { passive: true });
   start();
 }
