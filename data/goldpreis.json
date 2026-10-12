@@ -1,10 +1,10 @@
 {
-  "eur_per_gram": 119.52,
-  "silver_eur_per_gram": 1.737,
-  "updated_at": "2026-10-12T13:03:25.543Z",
+  "eur_per_gram": 119.99,
+  "silver_eur_per_gram": 1.738,
+  "updated_at": "2026-10-12T21:42:41.955Z",
   "source": {
     "spot": "gold-api.com (XAU/XAG, USD je Feinunze)",
-    "fx": "EZB-Referenzkurs via frankfurter.dev (2026-10-09): 1 USD = 0.89238 EUR",
-    "spot_time": "2026-10-12T13:03:10Z"
+    "fx": "EZB-Referenzkurs via frankfurter.dev (2026-10-12): 1 USD = 0.89437 EUR",
+    "spot_time": "2026-10-12T21:42:11Z"
   }
 }
